@@ -5,11 +5,11 @@
         <tr>
         {%- for field, metadata in fields %}
 
-            <th>{{ field|capitalize }}</th>
+            <th scope="col">{{ field|capitalize }}</th>
 
         {%- endfor %}
 
-            <th>Actions</th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
