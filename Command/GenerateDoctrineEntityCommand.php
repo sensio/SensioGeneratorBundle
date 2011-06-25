@@ -105,7 +105,9 @@ EOT
             'You must use the shortcut notation like <comment>AcmeBlogBundle:Post</comment>.',
             ''
         ));
-        $entity = $dialog->askAndValidate($output, $dialog->getQuestion('The Entity shortcut name', $input->getOption('entity')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'), false, $input->getOption('entity'));
+        
+        $bundleNames = array_keys($this->getContainer()->get('kernel')->getBundles());
+        $entity = $dialog->askAndValidate($output, $dialog->getQuestion('The Entity shortcut name', $input->getOption('entity')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'), false, $input->getOption('entity'), $bundleNames);
         $input->setOption('entity', $entity);
 
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
@@ -116,7 +118,9 @@ EOT
             'Determine the format to use for the mapping information.',
             '',
         ));
-        $format = $dialog->askAndValidate($output, $dialog->getQuestion('Configuration format (yml, xml, php, or annotation)', $input->getOption('format')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateFormat'), false, $input->getOption('format'));
+        
+        $formatTypes = array('yml', 'xml', 'php', 'annotation');
+        $format = $dialog->askAndValidate($output, $dialog->getQuestion('Configuration format (yml, xml, php, or annotation)', $input->getOption('format')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateFormat'), false, $input->getOption('format'), $formatTypes);
         $input->setOption('format', $format);
 
         // fields
@@ -215,7 +219,7 @@ EOT
             if (!$name) {
                 break;
             }
-            $type   = $dialog->askAndValidate($output, $dialog->getQuestion('Field type', 'string'), $fieldValidator, false, 'string');
+            $type   = $dialog->askAndValidate($output, $dialog->getQuestion('Field type', 'string'), $fieldValidator, false, 'string', $types);
             $length = $dialog->askAndValidate($output, $dialog->getQuestion('Field length', null), $lengthValidator, false, null);
 
             $fields[] = array('fieldName' => $name, 'type' => $type, 'length' => $length);
