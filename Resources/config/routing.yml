@@ -1,0 +1,6 @@
+_generator:
+    resource: "@SensioGeneratorBundle/Controller/MainController.php"
+    type:     annotation
+_generator_bundle:
+    resource: "@SensioGeneratorBundle/Controller/BundleController.php"
+    type:     annotation

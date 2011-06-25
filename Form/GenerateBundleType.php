@@ -1,0 +1,37 @@
+<?php
+
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Sensio\Bundle\GeneratorBundle\Form;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilder;
+
+use Sensio\Bundle\GeneratorBundle\Entity\Bundle;
+
+/**
+ * Generate a Bundle
+ *
+ * @author Cédric Lahouste <cedric.lahouste@gmail.com>
+ */
+class GenerateBundleType extends AbstractType
+{
+    public function buildForm(FormBuilder $builder, array $options)
+    {
+        $builder
+            ->add('namespace_vendor', 'text')
+            ->add('namespace_bundle', 'text')
+            ->add('bundle_name', 'text')
+            ->add('dir', 'text')
+            ->add('format', 'choice', array('choices' => Bundle::getConfigurationFormats()))
+            ->add('structure', 'checkbox')
+        ;
+    }
+}
