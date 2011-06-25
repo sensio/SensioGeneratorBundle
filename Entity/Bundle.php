@@ -49,8 +49,8 @@ class Bundle
 
     public function __construct()
     {
-        $this->dir = '/src';
-        $this->format = 'annotations';
+        $this->dir = 'src';
+        $this->format = 'annotation';
     }
 
     /**
@@ -58,6 +58,11 @@ class Bundle
      */
     static public function getConfigurationFormats()
     {
-        return array('xml', 'yml', 'php', 'annotations');
+        return array(
+            'xml' => 'xml', 
+            'yml' => 'yml', 
+            'php' => 'php', 
+            'annotation' => 'annotation'
+        );
     }
 }
