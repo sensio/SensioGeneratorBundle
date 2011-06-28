@@ -9,6 +9,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+/**
+ * Main controller containing the menu
+ *
+ * @author Cédric Lahouste <cedric.lahouste@gmail.com>
+ */
 class MainController extends Controller
 {   
     /**

@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormBuilder;
 use Sensio\Bundle\GeneratorBundle\Entity\Bundle;
 
 /**
- * Generate a Bundle
+ * Form for Bundle generating
  *
  * @author Cédric Lahouste <cedric.lahouste@gmail.com>
  */

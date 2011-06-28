@@ -14,6 +14,11 @@ use Sensio\Bundle\GeneratorBundle\Entity\Bundle;
 use Sensio\Bundle\GeneratorBundle\Generator\BundleGenerator;
 use Sensio\Bundle\GeneratorBundle\Command\Validators;
 
+/**
+ * Controller for bundle generating
+ *
+ * @author Cédric Lahouste <cedric.lahouste@gmail.com>
+ */
 class BundleController extends Controller
 {   
     /**
