@@ -40,7 +40,7 @@ class BundleController extends Controller
                 $generator = new BundleGenerator($this->get('filesystem'), __DIR__.'/../Resources/skeleton/bundle');
                 $generator->generate($namespace, $bundle->bundle_name, $dir, $bundle->format, $bundle->structure);
                 
-                $request->getSession()->setFlash('Your bundle has been generated.');
+                $request->getSession()->setFlash('notice','Your bundle has been generated.');
                 return new RedirectResponse($this->generateUrl('_generator'));
             }
         }

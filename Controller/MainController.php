@@ -18,7 +18,7 @@ class MainController extends Controller
     public function indexAction()
     {        
         return array(
-        
+            'message' => $this->get('request')->getSession()->getFlash('notice')
         );
     }
 }
