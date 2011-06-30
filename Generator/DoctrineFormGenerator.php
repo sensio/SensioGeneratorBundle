@@ -77,6 +77,7 @@ class DoctrineFormGenerator extends Generator
             'namespace'        => $bundle->getNamespace(),
             'entity_namespace' => implode('\\', $parts),
             'form_class'       => $this->className,
+            'entity_class'     => $entityClass,
         ));
     }
 

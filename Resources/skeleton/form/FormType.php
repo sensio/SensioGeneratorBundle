@@ -18,4 +18,11 @@ class {{ form_class }} extends AbstractType
 
         ;
     }
+    public function getDefaultOptions(array $options)
+    {
+        return array(
+            'data_class' => '{{ namespace }}\Entity{{ entity_namespace ? '\\' ~ entity_namespace : '' }}\{{ entity_class }}',
+        );
+    }
+
 }
