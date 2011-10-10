@@ -219,6 +219,7 @@ class DoctrineCrudGenerator extends Generator
         $this->renderFile($this->skeletonDir, 'views/index.html.twig', $dir.'/index.html.twig', array(
             'dir'               => $this->skeletonDir,
             'entity'            => $this->entity,
+            'bundle'            => $this->bundle->getName(),
             'fields'            => $this->metadata->fieldMappings,
             'actions'           => $this->actions,
             'record_actions'    => $this->getRecordActions(),
@@ -237,6 +238,7 @@ class DoctrineCrudGenerator extends Generator
         $this->renderFile($this->skeletonDir, 'views/show.html.twig', $dir.'/show.html.twig', array(
             'dir'               => $this->skeletonDir,
             'entity'            => $this->entity,
+            'bundle'            => $this->bundle->getName(),
             'fields'            => $this->metadata->fieldMappings,
             'actions'           => $this->actions,
             'route_prefix'      => $this->routePrefix,
@@ -256,6 +258,7 @@ class DoctrineCrudGenerator extends Generator
             'route_prefix'      => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
             'entity'            => $this->entity,
+            'bundle'            => $this->bundle->getName(),
             'actions'           => $this->actions,
         ));
     }
@@ -272,6 +275,7 @@ class DoctrineCrudGenerator extends Generator
             'route_prefix'      => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
             'entity'            => $this->entity,
+            'bundle'            => $this->bundle->getName(),
             'actions'           => $this->actions,
         ));
     }
