@@ -7,7 +7,7 @@
         <tr>
             <th>{{ field|capitalize }}</th>
 
-        {%- if metadata.type in ['date', 'datetime'] %}
+        {%- if metadata.type in ['date', 'datetime', 'time'] %}
 
             <td>{{ '{{ entity.'~ field|replace({'_': ''}) ~'|date(\'Y-m-d H:i:s\') }}' }}</td>
 
