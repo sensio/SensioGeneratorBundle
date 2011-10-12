@@ -7,9 +7,12 @@
         <tr>
             <th>{{ field|capitalize }}</th>
 
-        {%- if metadata.type in ['date', 'datetime', 'time'] %}
-
-            <td>{{ '{{ entity.'~ field|replace({'_': ''}) ~'|date(\'Y-m-d H:i:s\') }}' }}</td>
+        {%- if metadata.type == 'datetime' %}
+    		   <td>{{ '{% if entity.'~ field|replace({'_': ''}) ~' %}{{ entity.'~ field|replace({'_': ''}) ~'|date(\'Y-m-d H:i:s\') }}{% endif %}' }}</td>
+        {%- elseif metadata.type == 'date' %}
+        	   <td>{{ '{% if entity.'~ field|replace({'_': ''}) ~' %}{{ entity.'~ field|replace({'_': ''}) ~'|date(\'Y-m-d\') }}{% endif %}' }}</td>
+        {%- elseif metadata.type == 'time' %}
+        	   <td>{{ '{% if entity.'~ field|replace({'_': ''}) ~' %}{{ entity.'~ field|replace({'_': ''}) ~'|date(\'H:i:s\') }}{% endif %}' }}</td>
 
         {%- else %}
 
