@@ -12,26 +12,25 @@
 
 namespace Sensio\Bundle\GeneratorBundle\Command;
 
-use Sensio\Bundle\GeneratorBundle\Command\GenerateBundleCommand as BaseCmd;
-use Sensio\Bundle\GeneratorBundle\Generator\BundleGenerator as BaseGen;
+use Sensio\Bundle\GeneratorBundle\Command\GenerateBundleCommand;
+use Sensio\Bundle\GeneratorBundle\Generator\BundleThinGenerator;
 
 /**
  * Generates "thin" bundles, containing only the essential files
  *
  * @author Ilias Lazaridis <ilias@lazaridis.com>
  */
-
-class GenerateBundleThinCommand extends BaseCmd
+class GenerateBundleThinCommand extends GenerateBundleCommand
 {
     protected $generator;
-    
+
     protected function configure()
     {
         parent::configure();
         $this->setName('generate:bundle:thin');
         $this->setDescription('Generates a thin bundle (only essential files)');
     }
-    
+
     protected function getGenerator()
     {
         if (null === $this->generator) {
@@ -44,24 +43,3 @@ class GenerateBundleThinCommand extends BaseCmd
     }
 }
 
-// Override behaviour of the related Generator
-
-class BundleThinGenerator extends BaseGen
-{    
-    protected function renderFile ($skeletonDir, $template, $target, $parameters)
-    {
-        // those files are not rendered
-        if ('Extension.php' == $template || 'Configuration.php' == $template) {
-            return;
-        }
-
-        // don't render services.*
-        $filename = pathinfo($template, PATHINFO_FILENAME);
-        if ('services' == $filename) {
-            return;
-        }
-
-        // all other files rendered as usual
-        parent::renderFile($skeletonDir, $template, $target, $parameters);
-    }
-}
