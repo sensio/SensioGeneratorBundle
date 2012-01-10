@@ -29,6 +29,8 @@ use Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper;
  */
 class GenerateBundleCommand extends ContainerAwareCommand
 {
+    private $generatorClass;
+    private $skeletonDir;
     private $generator;
 
     /**
@@ -36,6 +38,9 @@ class GenerateBundleCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
+        $this->setGeneratorClass('Sensio\Bundle\GeneratorBundle\Generator\BundleGenerator');
+        $this->setSkeletonDir(__DIR__.'/../Resources/skeleton/bundle');
+
         $this
             ->setDefinition(array(
                 new InputOption('namespace', '', InputOption::VALUE_REQUIRED, 'The namespace of the bundle to create'),
@@ -295,7 +300,7 @@ EOT
     protected function getGenerator()
     {
         if (null === $this->generator) {
-            $this->generator = new BundleGenerator($this->getContainer()->get('filesystem'), __DIR__.'/../Resources/skeleton/bundle');
+            $this->generator = new $this->generatorClass($this->getContainer()->get('filesystem'), $this->skeletonDir);
         }
 
         return $this->generator;
@@ -314,5 +319,25 @@ EOT
         }
 
         return $dialog;
+    }
+
+    public function setGeneratorClass($generatorClass)
+    {
+        $this->generatorClass = $generatorClass;
+    }
+    
+    public function getGeneratorClass()
+    {
+        return $this->generatorClass;
+    }
+
+    public function setSkeletonDir($skeletonDir)
+    {
+        $this->skeletonDir = $skeletonDir;
+    }
+    
+    public function getSkeletonDir()
+    {
+        return $this->skeletonDir;
     }
 }
