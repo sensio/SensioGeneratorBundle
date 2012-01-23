@@ -11,8 +11,8 @@
 
 namespace Sensio\Bundle\GeneratorBundle\Command;
 
-use Doctrine\Bundle\DoctrineBundle\Mapping\MetadataFactory;
-use Doctrine\Bundle\DoctrineBundle\Command\DoctrineCommand;
+use Symfony\Bundle\DoctrineBundle\Mapping\MetadataFactory;
+use Symfony\Bundle\DoctrineBundle\Command\DoctrineCommand;
 
 abstract class GenerateDoctrineCommand extends DoctrineCommand
 {
