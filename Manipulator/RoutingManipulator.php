@@ -58,7 +58,7 @@ class RoutingManipulator extends Manipulator
                     continue;
                 
                 $currentRoutingLine = trim($currentRoutingLine);
-                $currentRoutes[] = substr(trim($currentRoutingLine), 0, strlen($currentRoutingLine)-1);
+                $currentRoutes[] = substr($currentRoutingLine, 0, -1);
             }
             
             // Then, prevent a duplicate route from being added.
