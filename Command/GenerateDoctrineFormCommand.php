@@ -28,6 +28,8 @@ use Sensio\Bundle\GeneratorBundle\Generator\DoctrineFormGenerator;
  */
 class GenerateDoctrineFormCommand extends GenerateDoctrineCommand
 {
+    const DEFAULT_SKELETON = '/Resources/skeleton';
+
     /**
      * @see Command
      */
@@ -36,6 +38,7 @@ class GenerateDoctrineFormCommand extends GenerateDoctrineCommand
         $this
             ->setDefinition(array(
                 new InputArgument('entity', InputArgument::REQUIRED, 'The entity class name to initialize (shortcut notation)'),
+                new InputOption('skeleton', '', InputOption::VALUE_REQUIRED, 'The directory which contains skeleton files'),
             ))
             ->setDescription('Generates a form type class based on a Doctrine entity')
             ->setHelp(<<<EOT
@@ -60,8 +63,10 @@ EOT
         $entityClass = $this->getContainer()->get('doctrine')->getEntityNamespace($bundle).'\\'.$entity;
         $metadata = $this->getEntityMetadata($entityClass);
         $bundle   = $this->getApplication()->getKernel()->getBundle($bundle);
+        $skeleton = $input->getOption('skeleton') ?: dirname(__DIR__) . static::DEFAULT_SKELETON;
+        $skeleton = Validators::validateSourceDir($skeleton);
 
-        $generator = new DoctrineFormGenerator($this->getContainer()->get('filesystem'),  __DIR__.'/../Resources/skeleton/form');
+        $generator = new DoctrineFormGenerator($this->getContainer()->get('filesystem'),  $skeleton.'form');
         $generator->generate($bundle, $entity, $metadata[0]);
 
         $output->writeln(sprintf(

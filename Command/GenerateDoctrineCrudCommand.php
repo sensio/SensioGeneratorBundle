@@ -30,6 +30,8 @@ use Doctrine\ORM\Mapping\MappingException;
  */
 class GenerateDoctrineCrudCommand extends GenerateDoctrineCommand
 {
+    const DEFAULT_SKELETON = '/Resources/skeleton';
+
     private $generator;
     private $formGenerator;
 
@@ -44,6 +46,7 @@ class GenerateDoctrineCrudCommand extends GenerateDoctrineCommand
                 new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
                 new InputOption('with-write', '', InputOption::VALUE_NONE, 'Whether or not to generate create, new and delete actions'),
                 new InputOption('format', '', InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)', 'annotation'),
+                new InputOption('skeleton', '', InputOption::VALUE_REQUIRED, 'The directory which contains skeleton files'),
             ))
             ->setDescription('Generates a CRUD based on a Doctrine entity')
             ->setHelp(<<<EOT
@@ -90,6 +93,12 @@ EOT
         $entityClass = $this->getContainer()->get('doctrine')->getEntityNamespace($bundle).'\\'.$entity;
         $metadata    = $this->getEntityMetadata($entityClass);
         $bundle      = $this->getContainer()->get('kernel')->getBundle($bundle);
+        $skeleton = $input->getOption('skeleton');
+        if($skeleton) {
+            $skeleton = Validators::validateSourceDir($skeleton);
+            $this->setGenerator(new DoctrineCrudGenerator($this->getContainer()->get('filesystem'), $skeleton.'crud'));
+            $this->setFormGenerator(new DoctrineFormGenerator($this->getContainer()->get('filesystem'), $skeleton.'form'));
+        }
 
         $generator = $this->getGenerator();
         $generator->generate($bundle, $entity, $metadata[0], $format, $prefix, $withWrite);
@@ -171,6 +180,17 @@ EOT
         $prefix = $dialog->ask($output, $dialog->getQuestion('Routes prefix', '/'.$prefix), '/'.$prefix);
         $input->setOption('route-prefix', $prefix);
 
+        // skeleton dir
+        $skeleton = $input->getOption('skeleton') ?: dirname(__DIR__) . static::DEFAULT_SKELETON;
+        $output->writeln(array(
+            '',
+            'Determine skeleton directory to generate, or leave this as is',
+            'to generate from standard skeleton files.',
+            '',
+        ));
+        $skeleton = $dialog->askAndValidate($output, $dialog->getQuestion('Skeleton directory', $skeleton), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateSourceDir'), false, $skeleton);
+        $input->setOption('skeleton', $skeleton);
+
         // summary
         $output->writeln(array(
             '',
@@ -234,7 +254,7 @@ EOT
     protected function getGenerator()
     {
         if (null === $this->generator) {
-            $this->generator = new DoctrineCrudGenerator($this->getContainer()->get('filesystem'), __DIR__.'/../Resources/skeleton/crud');
+            $this->generator = new DoctrineCrudGenerator($this->getContainer()->get('filesystem'), __DIR__.'/..'.static::DEFAULT_SKELETON.'/crud');
         }
 
         return $this->generator;
@@ -248,7 +268,7 @@ EOT
     protected function getFormGenerator()
     {
         if (null === $this->formGenerator) {
-            $this->formGenerator = new DoctrineFormGenerator($this->getContainer()->get('filesystem'),  __DIR__.'/../Resources/skeleton/form');;
+            $this->formGenerator = new DoctrineFormGenerator($this->getContainer()->get('filesystem'), __DIR__.'/..'.static::DEFAULT_SKELETON.'/form');;
         }
 
         return $this->formGenerator;

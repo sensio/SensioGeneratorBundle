@@ -64,6 +64,15 @@ class Validators
         return '/' === substr($dir, -1, 1) ? $dir : $dir.'/';
     }
 
+    static public function validateSourceDir($dir)
+    {
+        if (!is_dir($dir)) {
+            throw new \InvalidArgumentException('The directory must exist.');
+        }
+        // add trailing / if necessary
+        return '/' === substr($dir, -1, 1) ? $dir : $dir.'/';
+    }
+
     static public function validateFormat($format)
     {
         $format = strtolower($format);

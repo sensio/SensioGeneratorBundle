@@ -29,6 +29,8 @@ use Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper;
  */
 class GenerateBundleCommand extends ContainerAwareCommand
 {
+    const DEFAULT_SKELETON = '/Resources/skeleton';
+
     private $generator;
 
     /**
@@ -43,6 +45,7 @@ class GenerateBundleCommand extends ContainerAwareCommand
                 new InputOption('bundle-name', '', InputOption::VALUE_REQUIRED, 'The optional bundle name'),
                 new InputOption('format', '', InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)', 'annotation'),
                 new InputOption('structure', '', InputOption::VALUE_NONE, 'Whether to generate the whole directory structure'),
+                new InputOption('skeleton', '', InputOption::VALUE_REQUIRED, 'The directory which contains skeleton files'),
             ))
             ->setDescription('Generates a bundle')
             ->setHelp(<<<EOT
@@ -101,6 +104,11 @@ EOT
         $dir = Validators::validateTargetDir($input->getOption('dir'), $bundle, $namespace);
         $format = Validators::validateFormat($input->getOption('format'));
         $structure = $input->getOption('structure');
+        $skeleton = $input->getOption('skeleton');
+        if($skeleton) {
+            $skeleton = Validators::validateSourceDir($skeleton);
+            $this->setGenerator(new BundleGenerator($this->getContainer()->get('filesystem'), $skeleton.'bundle'));
+        }
 
         $dialog->writeSection($output, 'Bundle generation');
 
@@ -202,6 +210,17 @@ EOT
         }
         $input->setOption('structure', $structure);
 
+        // skeleton dir
+        $skeleton = $input->getOption('skeleton') ?: dirname(__DIR__) . static::DEFAULT_SKELETON;
+        $output->writeln(array(
+            '',
+            'Determine skeleton directory to generate, or leave this as is',
+            'to generate from standard skeleton files.',
+            '',
+        ));
+        $skeleton = $dialog->askAndValidate($output, $dialog->getQuestion('Skeleton directory', $skeleton), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateSourceDir'), false, $skeleton);
+        $input->setOption('skeleton', $skeleton);
+
         // summary
         $output->writeln(array(
             '',
@@ -295,7 +314,7 @@ EOT
     protected function getGenerator()
     {
         if (null === $this->generator) {
-            $this->generator = new BundleGenerator($this->getContainer()->get('filesystem'), __DIR__.'/../Resources/skeleton/bundle');
+            $this->generator = new BundleGenerator($this->getContainer()->get('filesystem'), __DIR__.'/..'.static::DEFAULT_SKELETON.'/bundle');
         }
 
         return $this->generator;
