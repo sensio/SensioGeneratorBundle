@@ -35,7 +35,7 @@
 {% if 'delete' in actions %}
             'delete_form' => $deleteForm->createView(),
 
-{% endif %}
+{%- endif %}
         ));
 {% endif %}
     }
