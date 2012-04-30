@@ -31,13 +31,13 @@ class GenerateDoctrineEntityCommand extends GenerateDoctrineCommand
     protected function configure()
     {
         $this
-            ->setName('doctrine:generate:entity')
-            ->setAliases(array('generate:doctrine:entity'))
+            ->setDefinition(array(
+                new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
+                new InputOption('fields', '', InputOption::VALUE_REQUIRED, 'The fields to create with the new entity'),
+                new InputOption('format', '', InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)', 'annotation'),
+                new InputOption('with-repository', '', InputOption::VALUE_NONE, 'Whether to generate the entity repository or not'),
+            ))
             ->setDescription('Generates a new Doctrine entity inside a bundle')
-            ->addOption('entity', null, InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)')
-            ->addOption('fields', null, InputOption::VALUE_REQUIRED, 'The fields to create with the new entity')
-            ->addOption('format', null, InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)', 'annotation')
-            ->addOption('with-repository', null, InputOption::VALUE_NONE, 'Whether to generate the entity repository or not')
             ->setHelp(<<<EOT
 The <info>doctrine:generate:entity</info> task generates a new Doctrine
 entity inside a bundle:
@@ -67,7 +67,9 @@ without forgetting to pass all needed options:
 
 <info>php app/console doctrine:generate:entity --entity=AcmeBlogBundle:Blog/Post --format=annotation --fields="title:string(255) body:text" --with-repository --no-interaction</info>
 EOT
-        );
+        )
+        ->setName('doctrine:generate:entity')
+        ->setAliases(array('generate:doctrine:entity'));
     }
 
     /**
