@@ -31,6 +31,7 @@ class DoctrineCrudGenerator extends Generator
     private $metadata;
     private $format;
     private $actions;
+    private $controllerDir;
 
     /**
      * Constructor.
@@ -53,10 +54,11 @@ class DoctrineCrudGenerator extends Generator
      * @param string $format The configuration format (xml, yaml, annotation)
      * @param string $routePrefix The route name prefix
      * @param array $needWriteActions Wether or not to generate write actions
+     * @param array $dir The directory where to generate the controller
      *
      * @throws \RuntimeException
      */
-    public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata, $format, $routePrefix, $needWriteActions)
+    public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata, $format, $routePrefix, $needWriteActions, $dir = 'Controller')
     {
         $this->routePrefix = $routePrefix;
         $this->routeNamePrefix = str_replace('/', '_', $routePrefix);
@@ -74,10 +76,12 @@ class DoctrineCrudGenerator extends Generator
         $this->bundle   = $bundle;
         $this->metadata = $metadata;
         $this->setFormat($format);
+        $this->controllerDir = $dir;
 
         $this->generateControllerClass();
 
-        $dir = sprintf('%s/Resources/views/%s', $this->bundle->getPath(), str_replace('\\', '/', $this->entity));
+        $subDir = $this->controllerDir == 'Controller' ? '' : str_replace('Controller/', '', $this->controllerDir).'/';
+        $dir = sprintf('%s/Resources/views/%s', $this->bundle->getPath(), $subDir.str_replace('\\', '/', $this->entity));
 
         if (!file_exists($dir)) {
             $this->filesystem->mkdir($dir, 0777);
@@ -90,6 +94,7 @@ class DoctrineCrudGenerator extends Generator
         }
 
         if (in_array('new', $this->actions)) {
+            $this->generateFormView($dir);
             $this->generateNewView($dir);
         }
 
@@ -158,10 +163,12 @@ class DoctrineCrudGenerator extends Generator
         $parts = explode('\\', $this->entity);
         $entityClass = array_pop($parts);
         $entityNamespace = implode('\\', $parts);
+        $controllerNamespace = str_replace('/', '\\', $this->controllerDir);
 
         $target = sprintf(
-            '%s/Controller/%s/%sController.php',
+            '%s/%s/%s/%sController.php',
             $dir,
+            $this->controllerDir,
             str_replace('\\', '/', $entityNamespace),
             $entityClass
         );
@@ -171,16 +178,17 @@ class DoctrineCrudGenerator extends Generator
         }
 
         $this->renderFile($this->skeletonDir, 'controller.php', $target, array(
-            'actions'           => $this->actions,
-            'route_prefix'      => $this->routePrefix,
-            'route_name_prefix' => $this->routeNamePrefix,
-            'dir'               => $this->skeletonDir,
-            'bundle'            => $this->bundle->getName(),
-            'entity'            => $this->entity,
-            'entity_class'      => $entityClass,
-            'namespace'         => $this->bundle->getNamespace(),
-            'entity_namespace'  => $entityNamespace,
-            'format'            => $this->format,
+            'actions'              => $this->actions,
+            'route_prefix'         => $this->routePrefix,
+            'route_name_prefix'    => $this->routeNamePrefix,
+            'dir'                  => $this->skeletonDir,
+            'bundle'               => $this->bundle->getName(),
+            'entity'               => $this->entity,
+            'entity_class'         => $entityClass,
+            'namespace'            => $this->bundle->getNamespace(),
+            'controller_namespace' => $controllerNamespace,
+            'entity_namespace'     => $entityNamespace,
+            'format'               => $this->format,
         ));
     }
 
@@ -193,19 +201,21 @@ class DoctrineCrudGenerator extends Generator
         $parts = explode('\\', $this->entity);
         $entityClass = array_pop($parts);
         $entityNamespace = implode('\\', $parts);
+        $controllerNamespace = str_replace('/', '\\', $this->controllerDir);
 
-        $dir    = $this->bundle->getPath() .'/Tests/Controller';
+        $dir    = $this->bundle->getPath() .'/Tests/'.$this->controllerDir;
         $target = $dir .'/'. str_replace('\\', '/', $entityNamespace).'/'. $entityClass .'ControllerTest.php';
 
         $this->renderFile($this->skeletonDir, 'tests/test.php', $target, array(
-            'route_prefix'      => $this->routePrefix,
-            'route_name_prefix' => $this->routeNamePrefix,
-            'entity'            => $this->entity,
-            'entity_class'      => $entityClass,
-            'namespace'         => $this->bundle->getNamespace(),
-            'entity_namespace'  => $entityNamespace,
-            'actions'           => $this->actions,
-            'dir'               => $this->skeletonDir,
+            'route_prefix'         => $this->routePrefix,
+            'route_name_prefix'    => $this->routeNamePrefix,
+            'entity'               => $this->entity,
+            'entity_class'         => $entityClass,
+            'namespace'            => $this->bundle->getNamespace(),
+            'entity_namespace'     => $entityNamespace,
+            'controller_namespace' => $controllerNamespace,
+            'actions'              => $this->actions,
+            'dir'                  => $this->skeletonDir,
         ));
     }
 
@@ -257,6 +267,8 @@ class DoctrineCrudGenerator extends Generator
             'route_name_prefix' => $this->routeNamePrefix,
             'entity'            => $this->entity,
             'actions'           => $this->actions,
+            'bundle'            => $this->bundle->getName(),
+            'form_dir'          => $this->getFormTemplateDir($dir),
         ));
     }
 
@@ -273,6 +285,21 @@ class DoctrineCrudGenerator extends Generator
             'route_name_prefix' => $this->routeNamePrefix,
             'entity'            => $this->entity,
             'actions'           => $this->actions,
+            'bundle'            => $this->bundle->getName(),
+            'form_dir'          => $this->getFormTemplateDir($dir),
+        ));
+    }
+
+    private function generateFormView($dir)
+    {
+        $this->renderFile($this->skeletonDir, 'views/form.html.twig', $dir.'/form.html.twig', array(
+            'dir'               => $this->skeletonDir,
+            'route_prefix'      => $this->routePrefix,
+            'route_name_prefix' => $this->routeNamePrefix,
+            'entity'            => $this->entity,
+            'actions'           => $this->actions,
+            'bundle'            => $this->bundle->getName(),
+            'form_dir'          => $this->getFormTemplateDir($dir),
         ));
     }
 
@@ -286,5 +313,24 @@ class DoctrineCrudGenerator extends Generator
         return array_filter($this->actions, function($item) {
             return in_array($item, array('show', 'edit'));
         });
+    }
+
+    /**
+     * Returns the directory of the form template used in the edit and new
+     * twig template to includ it.
+     *
+     * @param $dir
+     * @return string
+     */
+    private function getFormTemplateDir($dir)
+    {
+        $subDir  = '';
+        $baseDir = substr($dir, strrpos($dir, '/') + 1);
+
+        if ($this->controllerDir != 'Controller') {
+            $subDir = str_replace('Controller/', '', $this->controllerDir).'/';
+        }
+
+        return $subDir.$baseDir;
     }
 }

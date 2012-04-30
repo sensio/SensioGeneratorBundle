@@ -1,0 +1,6 @@
+<form action="{{ "{{ entity.id ? path('"~ route_name_prefix ~"_update', { 'id': entity.id }) : path('"~ route_name_prefix ~"_create') }}" }}" method="post" {{ "{{ form_enctype(form) }}" }}>
+    {{ "{{ form_widget(form) }}" }}
+    <p>
+        <button type="submit">{{ "{{ entity.id ? 'Edit' : 'Create' }}" }}</button>
+    </p>
+</form>

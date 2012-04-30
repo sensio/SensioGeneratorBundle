@@ -1,6 +1,6 @@
 <?php
 
-namespace {{ namespace }}\Tests\Controller{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
+namespace {{ namespace }}\Tests\{{ controller_namespace }}{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

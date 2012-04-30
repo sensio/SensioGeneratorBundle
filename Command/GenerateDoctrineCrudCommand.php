@@ -41,6 +41,7 @@ class GenerateDoctrineCrudCommand extends GenerateDoctrineCommand
         $this
             ->setDefinition(array(
                 new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
+                new InputOption('controller-dir', '', InputOption::VALUE_REQUIRED, 'The controller directory (Controller)', 'Controller'),
                 new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
                 new InputOption('with-write', '', InputOption::VALUE_NONE, 'Whether or not to generate create, new and delete actions'),
                 new InputOption('format', '', InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)', 'annotation'),
@@ -90,9 +91,10 @@ EOT
         $entityClass = $this->getContainer()->get('doctrine')->getEntityNamespace($bundle).'\\'.$entity;
         $metadata    = $this->getEntityMetadata($entityClass);
         $bundle      = $this->getContainer()->get('kernel')->getBundle($bundle);
+        $dir         = $input->getOption('controller-dir');
 
         $generator = $this->getGenerator();
-        $generator->generate($bundle, $entity, $metadata[0], $format, $prefix, $withWrite);
+        $generator->generate($bundle, $entity, $metadata[0], $format, $prefix, $withWrite, $dir);
 
         $output->writeln('Generating the CRUD code: <info>OK</info>');
 
@@ -138,6 +140,21 @@ EOT
         // Entity exists?
         $entityClass = $this->getContainer()->get('doctrine')->getEntityNamespace($bundle).'\\'.$entity;
         $metadata = $this->getEntityMetadata($entityClass);
+
+        // Controller dir
+        $output->writeln(array(
+            '',
+            'Define the directory where the controller will be generated (if you change this value, ',
+            'it must be under the Controller folder).',
+            '',
+            'For example, if you define Controller/Backend, the controller will be generated under',
+            '<comment>Sensio/AcmeBlogBundle/Controller/Backend/PostController.php </comment>',
+            'with the namespace <comment>Sensio/AcmeBlogBundle/Controller/Backend</comment>',
+            'and the views will be in <comment>Sensio/AcmeBlogBundle/Resources/views/backend/Post</comment>',
+            '',
+        ));
+        $dir = $dialog->ask($output, $dialog->getQuestion('The controller directory', $input->getOption('controller-dir')), $input->getOption('controller-dir'));
+        $input->setOption('controller-dir', $dir);
 
         // write?
         $withWrite = $input->getOption('with-write') ?: false;

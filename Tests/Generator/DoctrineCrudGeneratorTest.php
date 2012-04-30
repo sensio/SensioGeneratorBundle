@@ -51,6 +51,18 @@ class DoctrineCrudGeneratorTest extends GeneratorTest
         foreach ($strings as $string) {
             $this->assertContains($string, $content);
         }
+
+        $this->getGenerator()->generate($this->getBundle(), 'User', $this->getMetadata(), 'yml', '/user', false, 'Controller/Backend');
+
+        $files = array(
+            'Controller/Backend/UserController.php',
+            'Tests/Controller/Backend/UserControllerTest.php',
+            'Resources/views/Backend/User/index.html.twig',
+            'Resources/views/Backend/User/show.html.twig',
+        );
+        foreach ($files as $file) {
+            $this->assertTrue(file_exists($this->tmpDir.'/'.$file), sprintf('%s has been generated', $file));
+        }
     }
 
     public function testGenerateXml()
@@ -96,6 +108,18 @@ class DoctrineCrudGeneratorTest extends GeneratorTest
         foreach ($strings as $string) {
             $this->assertNotContains($string, $content);
         }
+
+        $this->getGenerator()->generate($this->getBundle(), 'User', $this->getMetadata(), 'xml', '/user', false, 'Controller/Backend');
+
+        $files = array(
+            'Controller/Backend/UserController.php',
+            'Tests/Controller/Backend/UserControllerTest.php',
+            'Resources/views/Backend/User/index.html.twig',
+            'Resources/views/Backend/User/show.html.twig',
+        );
+        foreach ($files as $file) {
+            $this->assertTrue(file_exists($this->tmpDir.'/'.$file), sprintf('%s has been generated', $file));
+        }
     }
 
     public function testGenerateAnnotationWrite()
@@ -109,6 +133,7 @@ class DoctrineCrudGeneratorTest extends GeneratorTest
             'Resources/views/Post/show.html.twig',
             'Resources/views/Post/new.html.twig',
             'Resources/views/Post/edit.html.twig',
+            'Resources/views/Post/form.html.twig',
         );
         foreach ($files as $file) {
             $this->assertTrue(file_exists($this->tmpDir.'/'.$file), sprintf('%s has been generated', $file));
@@ -134,6 +159,21 @@ class DoctrineCrudGeneratorTest extends GeneratorTest
         foreach ($strings as $string) {
             $this->assertContains($string, $content);
         }
+
+        $this->getGenerator()->generate($this->getBundle(), 'User', $this->getMetadata(), 'annotation', '/user', true, 'Controller/Backend');
+
+        $files = array(
+            'Controller/Backend/UserController.php',
+            'Tests/Controller/Backend/UserControllerTest.php',
+            'Resources/views/Backend/User/index.html.twig',
+            'Resources/views/Backend/User/show.html.twig',
+            'Resources/views/Backend/User/new.html.twig',
+            'Resources/views/Backend/User/edit.html.twig',
+            'Resources/views/Backend/User/form.html.twig',
+        );
+        foreach ($files as $file) {
+            $this->assertTrue(file_exists($this->tmpDir.'/'.$file), sprintf('%s has been generated', $file));
+        }
     }
 
     public function testGenerateAnnotation()
@@ -148,16 +188,6 @@ class DoctrineCrudGeneratorTest extends GeneratorTest
         );
         foreach ($files as $file) {
             $this->assertTrue(file_exists($this->tmpDir.'/'.$file), sprintf('%s has been generated', $file));
-        }
-
-        $files = array(
-            'Resources/config/routing/post.yml',
-            'Resources/config/routing/post.xml',
-            'Resources/views/Post/new.html.twig',
-            'Resources/views/Post/edit.html.twig',
-        );
-        foreach ($files as $file) {
-            $this->assertFalse(file_exists($this->tmpDir.'/'.$file), sprintf('%s has not been generated', $file));
         }
 
         $content = file_get_contents($this->tmpDir.'/Controller/PostController.php');
@@ -178,6 +208,18 @@ class DoctrineCrudGeneratorTest extends GeneratorTest
         );
         foreach ($strings as $string) {
             $this->assertNotContains($string, $content);
+        }
+
+        $this->getGenerator()->generate($this->getBundle(), 'User', $this->getMetadata(), 'annotation', '/user', false, 'Controller/Backend');
+
+        $files = array(
+            'Controller/Backend/UserController.php',
+            'Tests/Controller/Backend/UserControllerTest.php',
+            'Resources/views/Backend/User/index.html.twig',
+            'Resources/views/Backend/User/show.html.twig',
+        );
+        foreach ($files as $file) {
+            $this->assertTrue(file_exists($this->tmpDir.'/'.$file), sprintf('%s has been generated', $file));
         }
     }
 
