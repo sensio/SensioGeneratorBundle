@@ -1,3 +1,4 @@
+{% include 'views/others/template_header.html.twig' %}
 <h1>{{ entity }} creation</h1>
 
 <form action="{{ "{{ path('"~ route_name_prefix ~"_create') }}" }}" method="post" {{ "{{ form_enctype(form) }}" }}>
@@ -9,3 +10,4 @@
 
 {% set hide_edit, hide_delete = true, true %}
 {% include 'views/others/record_actions.html.twig' %}
+{% include 'views/others/template_footer.html.twig' %}

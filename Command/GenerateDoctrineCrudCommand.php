@@ -44,6 +44,8 @@ class GenerateDoctrineCrudCommand extends GenerateDoctrineCommand
                 new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
                 new InputOption('with-write', '', InputOption::VALUE_NONE, 'Whether or not to generate create, new and delete actions'),
                 new InputOption('format', '', InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)', 'annotation'),
+                new InputOption('basetemplate', '', InputOption::VALUE_OPTIONAL, 'The basetemplate to extend'),
+                new InputOption('blockname', '', InputOption::VALUE_OPTIONAL, 'The blockname in which the page bodies should be placed'),
             ))
             ->setDescription('Generates a CRUD based on a Doctrine entity')
             ->setHelp(<<<EOT
@@ -56,6 +58,10 @@ The default command only generates the list and show actions.
 Using the --with-write option allows to generate the new, edit and delete actions.
 
 <info>php app/console doctrine:generate:crud --entity=AcmeBlogBundle:Post --route-prefix=post_admin --with-write</info>
+
+Additionally, you can automatically generate the extends- and block tags if you already have those for your project. For this, you need to pass the basetemplate and blockname options.
+
+<info>php app/console doctrine:generate:crud --entity=AcmeBlogBundle:Post --basetemplate=::layout.html.twig --blockname=content</info>
 EOT
             )
             ->setName('doctrine:generate:crud')
@@ -92,7 +98,7 @@ EOT
         $bundle      = $this->getContainer()->get('kernel')->getBundle($bundle);
 
         $generator = $this->getGenerator();
-        $generator->generate($bundle, $entity, $metadata[0], $format, $prefix, $withWrite);
+        $generator->generate($bundle, $entity, $metadata[0], $format, $prefix, $withWrite$input->getOption('basetemplate'), $input->getOption('blockname'));
 
         $output->writeln('Generating the CRUD code: <info>OK</info>');
 
@@ -159,6 +165,27 @@ EOT
         ));
         $format = $dialog->askAndValidate($output, $dialog->getQuestion('Configuration format (yml, xml, php, or annotation)', $format), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateFormat'), false, $format);
         $input->setOption('format', $format);
+
+        // base template
+        $basetemplate = $input->getOption('basetemplate');
+        $output->writeln(array(
+            '',
+            'If you want to use a basetemplate to extend from, enter the name',
+            '',
+        ));
+        $basetemplate = $dialog->ask($output, $dialog->getQuestion('Enter the name of the base template', $basetemplate), $basetemplate);
+        $input->setOption('basetemplate', $basetemplate);
+
+        // block name
+        $blockname = $input->getOption('blockname');
+        $output->writeln(array(
+            '',
+            'When using a base template, in which block should the page content be placed',
+            '',
+        ));
+        $blockname = $dialog->ask($output, $dialog->getQuestion('Name of the block for the page content', $blockname), $blockname);
+        $input->setOption('blockname', $blockname);
+
 
         // route prefix
         $prefix = $this->getRoutePrefix($input, $entity);

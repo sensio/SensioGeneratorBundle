@@ -1,0 +1,6 @@
+{% if basetemplate %}
+{% raw %}{% extends '{% endraw %}{{ basetemplate }}{% raw %}' %}{% endraw %}
+{% endif %}
+{% if blockname %}
+{% raw %}{% block {% endraw %}{{ blockname }}{% raw %} %}{% endraw %}
+{% endif %}

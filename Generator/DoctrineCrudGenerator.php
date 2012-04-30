@@ -31,6 +31,8 @@ class DoctrineCrudGenerator extends Generator
     private $metadata;
     private $format;
     private $actions;
+    private $basetemplate;
+    private $blockname;
 
     /**
      * Constructor.
@@ -56,7 +58,7 @@ class DoctrineCrudGenerator extends Generator
      *
      * @throws \RuntimeException
      */
-    public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata, $format, $routePrefix, $needWriteActions)
+    public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata, $format, $routePrefix, $needWriteActions, $basetemplate = null, $blockname = null)
     {
         $this->routePrefix = $routePrefix;
         $this->routeNamePrefix = str_replace('/', '_', $routePrefix);
@@ -74,6 +76,8 @@ class DoctrineCrudGenerator extends Generator
         $this->bundle   = $bundle;
         $this->metadata = $metadata;
         $this->setFormat($format);
+        $this->basetemplate = $basetemplate;
+        $this->blockname = $blockname;
 
         $this->generateControllerClass();
 
@@ -224,6 +228,8 @@ class DoctrineCrudGenerator extends Generator
             'record_actions'    => $this->getRecordActions(),
             'route_prefix'      => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
+            'basetemplate'      => $this->basetemplate,
+            'blockname'         => $this->blockname,
         ));
     }
 
@@ -241,6 +247,8 @@ class DoctrineCrudGenerator extends Generator
             'actions'           => $this->actions,
             'route_prefix'      => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
+            'basetemplate'      => $this->basetemplate,
+            'blockname'         => $this->blockname,
         ));
     }
 
@@ -257,6 +265,9 @@ class DoctrineCrudGenerator extends Generator
             'route_name_prefix' => $this->routeNamePrefix,
             'entity'            => $this->entity,
             'actions'           => $this->actions,
+            'basetemplate'      => $this->basetemplate,
+            'blockname'         => $this->blockname,
+
         ));
     }
 
@@ -273,6 +284,8 @@ class DoctrineCrudGenerator extends Generator
             'route_name_prefix' => $this->routeNamePrefix,
             'entity'            => $this->entity,
             'actions'           => $this->actions,
+            'basetemplate'      => $this->basetemplate,
+            'blockname'         => $this->blockname,
         ));
     }
 

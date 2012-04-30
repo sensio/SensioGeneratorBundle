@@ -1,3 +1,4 @@
+{% include 'views/others/template_header.html.twig' %}
 <h1>{{ entity }}</h1>
 
 <table class="record_properties">
@@ -26,3 +27,4 @@
 
 {% set hide_edit, hide_delete = false, false %}
 {% include 'views/others/record_actions.html.twig' %}
+{% include 'views/others/template_footer.html.twig' %}
