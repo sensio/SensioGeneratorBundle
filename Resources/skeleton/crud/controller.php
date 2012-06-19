@@ -11,7 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use {{ namespace }}\Entity\{{ entity }};
 {% if 'new' in actions or 'edit' in actions %}
-use {{ namespace }}\Form\{{ entity }}Type;
+use {{ namespace }}\Form\Type\{{ entity }}Type;
 {% endif %}
 
 /**
