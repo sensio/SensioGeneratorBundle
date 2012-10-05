@@ -11,8 +11,6 @@
 
 namespace Sensio\Bundle\GeneratorBundle\Manipulator;
 
-use Symfony\Component\DependencyInjection\Container;
-
 /**
  * Changes the PHP code of a YAML routing file.
  *
@@ -50,15 +48,37 @@ class RoutingManipulator extends Manipulator
         if (file_exists($this->file)) {
             $current = file_get_contents($this->file);
 
+            // https://github.com/sensio/SensioGeneratorBundle/issues/40
+            // implemented by: Dave Lighthart Aug 31 2012
             // Don't add same bundle twice
-            if (false !== strpos($current, $bundle)) {
-                throw new \RuntimeException(sprintf('Bundle "%s" is already imported.', $bundle));
+            $currentRoutingLines = explode("\n", $current);
+            $currentRoutes       = array();
+            
+            // First, gather all routing keys.
+            foreach ($currentRoutingLines as $currentRoutingLine) {
+                if (empty($currentRoutingLine) || preg_match("/^[\s]/", $currentRoutingLine))
+                    continue;
+                
+                $currentRoutingLine = trim($currentRoutingLine);
+                $currentRoutes[] = substr($currentRoutingLine, 0, -1);
             }
+            // Then, prevent a duplicate route from being added.
+            if (in_array($bundle, $currentRoutes)) {
+                    throw new \RuntimeException(sprintf("Bundle \"%s\" is already imported.", $bundle));
+            }
+            
+            // Dave Lighthart Sep 06 2012
+            // Don't add duplicate entity route if already present
+            if (in_array($bundle."_".substr($prefix, 1),$currentRoutes)){ 
+                return true;
+            }
+            // escape function if already present;
+            // this assume duplicate route is update
         } elseif (!is_dir($dir = dirname($this->file))) {
             mkdir($dir, 0777, true);
         }
 
-        $code = sprintf("%s:\n", Container::underscore(substr($bundle, 0, -6)).('/' !== $prefix ? '_'.str_replace('/', '_', substr($prefix, 1)) : ''));
+        $code = sprintf("%s:\n", $bundle.('/' !== $prefix ? '_'.str_replace('/', '_', substr($prefix, 1)) : ''));
         if ('annotation' == $format) {
             $code .= sprintf("    resource: \"@%s/Controller/\"\n    type:     annotation\n", $bundle);
         } else {
