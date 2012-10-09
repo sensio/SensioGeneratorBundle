@@ -50,9 +50,22 @@ class RoutingManipulator extends Manipulator
         if (file_exists($this->file)) {
             $current = file_get_contents($this->file);
 
-            // Don't add same bundle twice
-            if (false !== strpos($current, $bundle)) {
-                throw new \RuntimeException(sprintf('Bundle "%s" is already imported.', $bundle));
+            // Don't add same bundle twice.
+            $currentRoutingLines = explode("\n", $current);
+            $currentRoutes       = array();
+            
+            // First, gather all routing keys.
+            foreach ($currentRoutingLines as $currentRoutingLine) {
+                if (empty($currentRoutingLine) || preg_match("/^[\s]/", $currentRoutingLine))
+                    continue;
+                
+                $currentRoutingLine = trim($currentRoutingLine);
+                $currentRoutes[] = substr($currentRoutingLine, 0, -1);
+            }
+            
+            // Then, prevent a duplicate route from being added.
+            if (in_array($bundle, $currentRoutes)) {
+                throw new \RuntimeException(sprintf("Bundle \"%s\" is already imported.", $bundle));
             }
         } elseif (!is_dir($dir = dirname($this->file))) {
             mkdir($dir, 0777, true);
