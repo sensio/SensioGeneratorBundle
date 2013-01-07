@@ -57,6 +57,22 @@ class Validators
 
         return $bundle;
     }
+    static public function validateClassName($class)
+    {
+        if (!preg_match('/^[A-Z][a-zA-Z]*$/', $class)) {
+            throw new \InvalidArgumentException('The class name must start with a capital letter followed by any number of letters.');
+        }
+
+        return $class;
+    }
+    static public function validateCommandName($name)
+    {
+        if (!preg_match('/^[a-z]+(:[a-z]+)+$/', $name)) {
+            throw new \InvalidArgumentException(sprintf('The command name (%s) must start with a word followed by any number of sequence collon and word.', $name));
+        }
+
+        return $name;
+    }
 
     static public function validateTargetDir($dir, $bundle, $namespace)
     {
