@@ -13,8 +13,6 @@ namespace Sensio\Bundle\GeneratorBundle\Tests\Command;
 
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\FormatterHelper;
-use Symfony\Component\Console\Output\StreamOutput;
-use Symfony\Component\Console\Tester\CommandTester;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper;
 use Symfony\Component\DependencyInjection\Container;
 
@@ -58,7 +56,7 @@ abstract class GenerateCommandTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($this->getBundle()))
         ;
 
-        $filesystem = $this->getMock('Symfony\Component\HttpKernel\Util\Filesystem');
+        $filesystem = $this->getMock('Symfony\Component\Filesystem\Filesystem');
         $filesystem
             ->expects($this->any())
             ->method('isAbsolutePath')

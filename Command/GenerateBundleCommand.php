@@ -55,7 +55,7 @@ conventions):
 
 <info>php app/console generate:bundle --namespace=Acme/BlogBundle</info>
 
-Note that you can use <comment>/</comment> instead of <comment>\\</comment> for the namespace delimiter to avoid any
+Note that you can use <comment>/</comment> instead of <comment>\\ </comment>for the namespace delimiter to avoid any
 problem.
 
 If you want to disable any user interaction, use <comment>--no-interaction</comment> but don't forget to pass all needed options:
@@ -148,7 +148,7 @@ EOT
             'See http://symfony.com/doc/current/cookbook/bundles/best_practices.html#index-1 for more',
             'details on bundle naming conventions.',
             '',
-            'Use <comment>/</comment> instead of <comment>\\</comment> for the namespace delimiter to avoid any problem.',
+            'Use <comment>/</comment> instead of <comment>\\ </comment> for the namespace delimiter to avoid any problem.',
             '',
         ));
 
@@ -191,7 +191,7 @@ EOT
         // optional files to generate
         $output->writeln(array(
             '',
-            'To help you getting started faster, the command can generate some',
+            'To help you get started faster, the command can generate some',
             'code snippets for you.',
             '',
         ));
@@ -217,10 +217,8 @@ EOT
         $output->write('Checking that the bundle is autoloaded: ');
         if (!class_exists($namespace.'\\'.$bundle)) {
             return array(
-                '- Edit the <comment>app/autoload.php</comment> file and register the bundle',
-                '  namespace at the top of the <comment>registerNamespaces()</comment> call:',
-                '',
-                sprintf('<comment>    \'%s\' => \'%s\',</comment>', $namespace, realpath($dir)),
+                '- Edit the <comment>composer.json</comment> file and register the bundle',
+                '  namespace in the "autoload" section:',
                 '',
             );
         }

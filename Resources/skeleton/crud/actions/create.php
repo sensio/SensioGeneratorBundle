@@ -3,26 +3,25 @@
      * Creates a new {{ entity }} entity.
      *
 {% if 'annotation' == format %}
-     * @Route("/create", name="{{ route_name_prefix }}_create")
-     * @Method("post")
+     * @Route("/", name="{{ route_name_prefix }}_create")
+     * @Method("POST")
      * @Template("{{ bundle }}:{{ entity }}:new.html.twig")
 {% endif %}
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
         $entity  = new {{ entity_class }}();
-        $request = $this->getRequest();
-        $form    = $this->createForm(new {{ entity_class }}Type(), $entity);
-        $form->bindRequest($request);
+        $form = $this->createForm(new {{ entity_class }}Type(), $entity);
+        $form->bind($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
             {% if 'show' in actions -%}
                 return $this->redirect($this->generateUrl('{{ route_name_prefix }}_show', array('id' => $entity->getId())));
-            {% else -%}
+            {%- else -%}
                 return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
             {%- endif %}
 
@@ -31,12 +30,12 @@
 {% if 'annotation' == format %}
         return array(
             'entity' => $entity,
-            'form'   => $form->createView()
+            'form'   => $form->createView(),
         );
 {% else %}
         return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:new.html.twig', array(
             'entity' => $entity,
-            'form'   => $form->createView()
+            'form'   => $form->createView(),
         ));
 {% endif %}
     }

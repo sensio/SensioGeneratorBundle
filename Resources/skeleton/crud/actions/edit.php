@@ -4,12 +4,13 @@
      *
 {% if 'annotation' == format %}
      * @Route("/{id}/edit", name="{{ route_name_prefix }}_edit")
+     * @Method("GET")
      * @Template()
 {% endif %}
      */
     public function editAction($id)
     {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($id);
 

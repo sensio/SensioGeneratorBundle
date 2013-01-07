@@ -47,8 +47,8 @@ class DoctrineFormGenerator extends Generator
     /**
      * Generates the entity form class if it does not exist.
      *
-     * @param BundleInterface $bundle The bundle in which to create the class
-     * @param string $entity The entity relative class name
+     * @param BundleInterface   $bundle   The bundle in which to create the class
+     * @param string            $entity   The entity relative class name
      * @param ClassMetadataInfo $metadata The entity metadata class
      */
     public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata)
@@ -76,6 +76,7 @@ class DoctrineFormGenerator extends Generator
             'fields'           => $this->getFieldsFromMetadata($metadata),
             'namespace'        => $bundle->getNamespace(),
             'entity_namespace' => implode('\\', $parts),
+            'entity_class'     => $entityClass,
             'form_class'       => $this->className,
             'form_type_name'   => strtolower(str_replace('\\', '_', $bundle->getNamespace()).($parts ? '_' : '').implode('_', $parts).'_'.$this->className),
         ));

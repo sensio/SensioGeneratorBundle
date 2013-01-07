@@ -11,11 +11,16 @@
 
 namespace Sensio\Bundle\GeneratorBundle\Command;
 
-use Symfony\Bundle\DoctrineBundle\Mapping\MetadataFactory;
-use Symfony\Bundle\DoctrineBundle\Command\DoctrineCommand;
+use Doctrine\Bundle\DoctrineBundle\Mapping\MetadataFactory;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-abstract class GenerateDoctrineCommand extends DoctrineCommand
+abstract class GenerateDoctrineCommand extends ContainerAwareCommand
 {
+    public function isEnabled()
+    {
+        return class_exists('Doctrine\\Bundle\\DoctrineBundle\\DoctrineBundle');
+    }
+
     protected function parseShortcutNotation($shortcut)
     {
         $entity = str_replace('/', '\\', $shortcut);

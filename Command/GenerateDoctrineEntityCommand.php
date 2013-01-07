@@ -16,7 +16,7 @@ use Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Symfony\Component\DependencyInjection\Container;
 use Doctrine\DBAL\Types\Type;
 
 /**
@@ -249,7 +249,7 @@ EOT
         while (true) {
             $output->writeln('');
             $self = $this;
-            $name = $dialog->askAndValidate($output, $dialog->getQuestion('New field name (press <return> to stop adding fields)', null), function ($name) use ($fields, $self) {
+            $columnName = $dialog->askAndValidate($output, $dialog->getQuestion('New field name (press <return> to stop adding fields)', null), function ($name) use ($fields, $self) {
                 if (isset($fields[$name]) || 'id' == $name) {
                     throw new \InvalidArgumentException(sprintf('Field "%s" is already defined.', $name));
                 }
@@ -261,27 +261,27 @@ EOT
 
                 return $name;
             });
-            if (!$name) {
+            if (!$columnName) {
                 break;
             }
 
             $defaultType = 'string';
 
-            if (substr($name, -3) == '_at') {
+            if (substr($columnName, -3) == '_at') {
                 $defaultType = 'datetime';
-            } else if (substr($name, -3) == '_id') {
+            } elseif (substr($columnName, -3) == '_id') {
                 $defaultType = 'integer';
             }
 
             $type = $dialog->askAndValidate($output, $dialog->getQuestion('Field type', $defaultType), $fieldValidator, false, $defaultType);
 
-            $data = array('fieldName' => $name, 'type' => $type);
+            $data = array('columnName' => $columnName, 'fieldName' => lcfirst(Container::camelize($columnName)), 'type' => $type);
 
             if ($type == 'string') {
                 $data['length'] = $dialog->askAndValidate($output, $dialog->getQuestion('Field length', 255), $lengthValidator, false, 255);
             }
 
-            $fields[$name] = $data;
+            $fields[$columnName] = $data;
         }
 
         return $fields;

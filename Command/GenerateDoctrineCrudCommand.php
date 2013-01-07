@@ -11,7 +11,6 @@
 
 namespace Sensio\Bundle\GeneratorBundle\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +20,6 @@ use Sensio\Bundle\GeneratorBundle\Generator\DoctrineCrudGenerator;
 use Sensio\Bundle\GeneratorBundle\Generator\DoctrineFormGenerator;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper;
 use Sensio\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
-use Doctrine\ORM\Mapping\MappingException;
 
 /**
  * Generates a CRUD for a Doctrine entity.
@@ -253,7 +251,7 @@ EOT
     protected function getFormGenerator()
     {
         if (null === $this->formGenerator) {
-            $this->formGenerator = new DoctrineFormGenerator($this->getContainer()->get('filesystem'),  __DIR__.'/../Resources/skeleton/form');;
+            $this->formGenerator = new DoctrineFormGenerator($this->getContainer()->get('filesystem'),  __DIR__.'/../Resources/skeleton/form');
         }
 
         return $this->formGenerator;

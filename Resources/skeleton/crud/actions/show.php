@@ -3,13 +3,14 @@
      * Finds and displays a {{ entity }} entity.
      *
 {% if 'annotation' == format %}
-     * @Route("/{id}/show", name="{{ route_name_prefix }}_show")
+     * @Route("/{id}", name="{{ route_name_prefix }}_show")
+     * @Method("GET")
      * @Template()
 {% endif %}
      */
     public function showAction($id)
     {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($id);
 
@@ -26,16 +27,14 @@
             'entity'      => $entity,
 {% if 'delete' in actions %}
             'delete_form' => $deleteForm->createView(),
-
-{%- endif %}
+{% endif %}
         );
 {% else %}
         return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:show.html.twig', array(
             'entity'      => $entity,
 {% if 'delete' in actions %}
             'delete_form' => $deleteForm->createView(),
-
-{% endif %}
+{%- endif %}
         ));
 {% endif %}
     }

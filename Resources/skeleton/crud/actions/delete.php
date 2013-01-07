@@ -3,19 +3,17 @@
      * Deletes a {{ entity }} entity.
      *
 {% if 'annotation' == format %}
-     * @Route("/{id}/delete", name="{{ route_name_prefix }}_delete")
-     * @Method("post")
+     * @Route("/{id}", name="{{ route_name_prefix }}_delete")
+     * @Method("DELETE")
 {% endif %}
      */
-    public function deleteAction($id)
+    public function deleteAction(Request $request, $id)
     {
         $form = $this->createDeleteForm($id);
-        $request = $this->getRequest();
-
-        $form->bindRequest($request);
+        $form->bind($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($id);
 
             if (!$entity) {
@@ -29,6 +27,13 @@
         return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
     }
 
+    /**
+     * Creates a form to delete a {{ entity }} entity by id.
+     *
+     * @param mixed $id The entity id
+     *
+     * @return Symfony\Component\Form\Form The form
+     */
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder(array('id' => $id))
