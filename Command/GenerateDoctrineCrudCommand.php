@@ -55,6 +55,11 @@ The default command only generates the list and show actions.
 Using the --with-write option allows to generate the new, edit and delete actions.
 
 <info>php app/console doctrine:generate:crud --entity=AcmeBlogBundle:Post --route-prefix=post_admin --with-write</info>
+
+Every generated file is based on a template. There are default templates but they can be overriden by placing custom templates in one of the following locations, by order of priority:
+
+<info>__bundle_path__/Resources/SensioGeneratorBundle/skeleton/crud
+__project_root__/app/Resources/SensioGeneratorBundle/skeleton/crud</info>
 EOT
             )
             ->setName('doctrine:generate:crud')
@@ -91,7 +96,7 @@ EOT
         $metadata    = $this->getEntityMetadata($entityClass);
         $bundle      = $this->getContainer()->get('kernel')->getBundle($bundle);
 
-        $generator = $this->getGenerator();
+        $generator = $this->getGenerator($bundle);
         $generator->generate($bundle, $entity, $metadata[0], $format, $prefix, $withWrite, $forceOverwrite);
 
         $output->writeln('Generating the CRUD code: <info>OK</info>');
@@ -236,10 +241,22 @@ EOT
         return $prefix;
     }
 
-    protected function getGenerator()
+    protected function getGenerator($bundle = null)
     {
         if (null === $this->generator) {
-            $this->generator = new DoctrineCrudGenerator($this->getContainer()->get('filesystem'), __DIR__.'/../Resources/skeleton/crud');
+
+            // list directories where to look for templates, in descending priority order
+            $customDirs = array();
+
+            if (isset($bundle) && is_dir($bundle->getPath() . '/Resources/SensioGeneratorBundle/skeleton/crud')) {
+                $customDirs[] = $bundle->getPath() . '/Resources/SensioGeneratorBundle/skeleton/crud';
+            }
+
+            if (is_dir($this->getContainer()->get('kernel')->getRootdir() . '/Resources/SensioGeneratorBundle/skeleton/crud')) {
+                $customDirs[] = $this->getContainer()->get('kernel')->getRootdir() . '/Resources/SensioGeneratorBundle/skeleton/crud';
+            }
+
+            $this->generator = new DoctrineCrudGenerator($this->getContainer()->get('filesystem'), realpath(__DIR__.'/../Resources/skeleton/crud'), $customDirs);
         }
 
         return $this->generator;
