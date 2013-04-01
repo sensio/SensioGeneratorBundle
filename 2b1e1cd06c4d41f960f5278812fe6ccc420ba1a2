@@ -1,0 +1,25 @@
+---------------------------------------------------------------------------
+
+by NinjDS at 2013-03-27T09:26:39Z
+
+PHP Fatal error:  Call to protected method Sensio\Bundle\GeneratorBundle\Command\GeneratorCommand::getGenerator() from context '' in /home/travis/build/sensio/SensioGeneratorBundle/Command/GenerateDoctrineEntityCommand.php on line 263
+
+Odd. Should i take a look at it? Only happens on PHP 5.3
+
+---------------------------------------------------------------------------
+
+by fabpot at 2013-03-27T09:30:40Z
+
+@NinjDS fixed now
+
+---------------------------------------------------------------------------
+
+by NinjDS at 2013-03-27T09:34:53Z
+
+Ok, great!
+
+---------------------------------------------------------------------------
+
+by aggressivex at 2013-03-31T18:08:02Z
+
+I've been used this and the changes are great :) waiting to the merge
