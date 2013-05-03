@@ -213,7 +213,7 @@ class DoctrineCrudGenerator extends Generator
      */
     protected function generateIndexView($dir)
     {
-        $this->renderFile('crud/views/index.html.twig.twig', $dir.'/index.html.twig', array(
+        $this->renderFile('crud/views/index.html.twig', $dir.'/index.html.twig', array(
             'bundle'            => $this->bundle->getName(),
             'entity'            => $this->entity,
             'fields'            => $this->metadata->fieldMappings,
@@ -231,7 +231,7 @@ class DoctrineCrudGenerator extends Generator
      */
     protected function generateShowView($dir)
     {
-        $this->renderFile('crud/views/show.html.twig.twig', $dir.'/show.html.twig', array(
+        $this->renderFile('crud/views/show.html.twig', $dir.'/show.html.twig', array(
             'bundle'            => $this->bundle->getName(),
             'entity'            => $this->entity,
             'fields'            => $this->metadata->fieldMappings,
@@ -248,7 +248,7 @@ class DoctrineCrudGenerator extends Generator
      */
     protected function generateNewView($dir)
     {
-        $this->renderFile('crud/views/new.html.twig.twig', $dir.'/new.html.twig', array(
+        $this->renderFile('crud/views/new.html.twig', $dir.'/new.html.twig', array(
             'bundle'            => $this->bundle->getName(),
             'entity'            => $this->entity,
             'route_prefix'      => $this->routePrefix,
