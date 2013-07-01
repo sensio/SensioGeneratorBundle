@@ -1,1 +1,9 @@
-Hello {% raw %}{{ name }}{% endraw %}!
+{% extends '::base.html.twig' %}
+
+{% block title %}
+Default:Index
+{% endblock title %}
+
+{% block body %}
+Hello {{ name }}!
+{% endblock body %}
