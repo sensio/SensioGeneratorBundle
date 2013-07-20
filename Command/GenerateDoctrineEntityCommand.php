@@ -255,6 +255,10 @@ EOT
             $output->writeln('');
             $generator = $this->getGenerator();
             $columnName = $dialog->askAndValidate($output, $dialog->getQuestion('New field name (press <return> to stop adding fields)', null), function ($name) use ($fields, $generator) {
+                if (strstr($name, ' ')) {
+                    throw new \InvalidArgumentException(sprintf('Name "%s" contains spaces.', $name));
+                }
+                
                 if (isset($fields[$name]) || 'id' == $name) {
                     throw new \InvalidArgumentException(sprintf('Field "%s" is already defined.', $name));
                 }
