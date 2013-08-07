@@ -40,8 +40,8 @@
      */
     private function createDeleteForm($id)
     {
-    	$formBuilder = $this->createFormBuilder(array('id' => $id));
-    	$formBuilder ->add('id', 'hidden');
-    	 
+        $formBuilder = $this->createFormBuilder(array('id' => $id));
+        $formBuilder ->add('id', 'hidden');
+
         return $formBuilder->getForm();
     }

@@ -1,4 +1,12 @@
 <?php
+/**
+ * Basic form type for {{ entity_class }} entity 
+ *
+ * @author 
+ * @version $Id$
+ * @copyright Erasoft
+ * @package BridgeHelper
+ */
 
 namespace {{ namespace }}\Form{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
 
@@ -6,20 +14,37 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * Form type class for {{ entity_class }} entity
+ *
+ * @package 
+ * @author  
+ */
 class {{ form_class }} extends AbstractType
 {
+    /**
+     * Defines form fields of current form type
+     * @param FormBuilderInterface $builder Instance of FormBuilder
+     * @param array                $options Options configuring form
+     *
+     * @author  
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
         {%- for field in fields %}
 
-            ->add('{{ field }}')
+            $builder->add('{{ field }}');
 
         {%- endfor %}
 
-        ;
     }
 
+    /**
+     * Sets default options
+     * @param OptionsResolverInterface $resolver Instance of options resolver
+     *
+     * @author  
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
@@ -27,6 +52,12 @@ class {{ form_class }} extends AbstractType
         ));
     }
 
+    /**
+     * Exposes form type name
+     * 
+     * @author
+     * @return string form type name  
+     */
     public function getName()
     {
         return '{{ form_type_name }}';
