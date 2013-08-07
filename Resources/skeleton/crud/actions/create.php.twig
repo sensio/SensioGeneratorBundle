@@ -1,7 +1,10 @@
 
     /**
      * Creates a new {{ entity }} entity.
+     * 
+     * @param Request $request Contains form data
      *
+     * @return Response Html output
 {% if 'annotation' == format %}
      * @Route("/", name="{{ route_name_prefix }}_create")
      * @Method("POST")

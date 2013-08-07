@@ -2,6 +2,9 @@
     /**
      * Displays a form to edit an existing {{ entity }} entity.
      *
+     * @param int $id Entity identifier
+     * 
+     * @return Response Html output
 {% if 'annotation' == format %}
      * @Route("/{id}/edit", name="{{ route_name_prefix }}_edit")
      * @Method("GET")

@@ -2,6 +2,9 @@
     /**
      * Finds and displays a {{ entity }} entity.
      *
+     * @param int $id Entity identifier
+     *
+     * @return Response Html output
 {% if 'annotation' == format %}
      * @Route("/{id}", name="{{ route_name_prefix }}_show")
      * @Method("GET")
