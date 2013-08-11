@@ -6,13 +6,17 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+* Form type definition
+* 
+*/
 class {{ form_class }} extends AbstractType
 {
     /**
      * Defines form fields of current form type
      * @param FormBuilderInterface $builder Instance of FormBuilder
      * @param array                $options Options configuring form
-     *
+     * 
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
