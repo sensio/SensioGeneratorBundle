@@ -2,7 +2,7 @@
     /**
      * Deletes a {{ entity }} entity.
      * 
-     * @param Request $request Contains form data
+     * @param Request $request Request instance containing form data
      * @param int     $id      Entity identifier
      *
      * @return Response A Response instance
@@ -40,8 +40,8 @@
      */
     private function createDeleteForm($id)
     {
-        $formBuilder = $this->createFormBuilder(array('id' => $id));
-        $formBuilder ->add('id', 'hidden');
-
-        return $formBuilder->getForm();
+        return $this->createFormBuilder(array('id' => $id))
+            ->add('id', 'hidden')
+            ->getForm()
+        ;
     }
