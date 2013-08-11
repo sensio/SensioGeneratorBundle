@@ -2,10 +2,10 @@
     /**
      * Edits an existing {{ entity }} entity.
      *
-     * @param Request $request Contains form data
+     * @param Request $request A Request instance
      * @param int     $id      Entity identifier
      *
-     * @return Response Html output
+     * @return Response A Response instance
 {% if 'annotation' == format %}
      * @Route("/{id}", name="{{ route_name_prefix }}_update")
      * @Method("PUT")
