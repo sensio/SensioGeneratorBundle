@@ -144,7 +144,7 @@ EOT
             '',
         ));
 
-		$entityShortcuts = $this->getEntityShortcuts();
+        $entityShortcuts = $this->getEntityShortcuts();
         $entity = $dialog->askAndValidate($output, $dialog->getQuestion('The Entity shortcut name', $input->getOption('entity')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'), false, $input->getOption('entity'), $entityShortcuts);
         $input->setOption('entity', $entity);
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
@@ -261,7 +261,7 @@ EOT
         return $this->formGenerator;
     }
 	
-	protected function getEntityShortcuts()
+    protected function getEntityShortcuts()
     {
         $bundles = $this->getContainer()->get('kernel')->getBundles();
         $factory = new MetadataFactory($this->getContainer()->get('doctrine'));
