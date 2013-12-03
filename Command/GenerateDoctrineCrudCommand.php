@@ -144,7 +144,8 @@ EOT
             '',
         ));
 
-        $entity = $dialog->askAndValidate($output, $dialog->getQuestion('The Entity shortcut name', $input->getOption('entity')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'), false, $input->getOption('entity'));
+		$entityShortcuts = $this->getEntityShortcuts();
+        $entity = $dialog->askAndValidate($output, $dialog->getQuestion('The Entity shortcut name', $input->getOption('entity')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'), false, $input->getOption('entity'), $entityShortcuts);
         $input->setOption('entity', $entity);
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
 
@@ -258,6 +259,27 @@ EOT
         }
 
         return $this->formGenerator;
+    }
+	
+	protected function getEntityShortcuts()
+    {
+        $bundles = $this->getContainer()->get('kernel')->getBundles();
+        $factory = new MetadataFactory($this->getContainer()->get('doctrine'));
+
+        $shortcutNames = array();
+        foreach($bundles as $bundleName=>$bundle) {
+            try {
+                foreach($factory->getBundleMetaData($bundle)->getMetadata() as $metadata) {
+                    $namespaceParts = explode('\\', $metadata->getName());
+                    $shortcutNames[] = $bundleName.":".array_pop($namespaceParts);
+                }
+            }
+            catch (\Exception $e) {
+                // ignored, Bundle has no mapped entities
+            }
+        }
+
+        return $shortcutNames;
     }
 
     public function setFormGenerator(DoctrineFormGenerator $formGenerator)
