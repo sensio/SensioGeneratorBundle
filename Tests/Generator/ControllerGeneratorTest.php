@@ -107,6 +107,8 @@ class ControllerGeneratorTest extends GeneratorTest
         $content = file_get_contents($this->tmpDir.'/Controller/PageController.php');
         $this->assertNotContains('@Route()', $content, 'Routing is done via a yml file');
 
+        $this->assertContains("\$this->render('FooBarBundle:Page:showPage.html.php', array(\n    // ...\n));", $content, 'Controller renders template');
+
         $content = file_get_contents($this->tmpDir.'/Resources/views/Page/showPage.html.php');
         $this->assertContains($this->getBundle()->getName().':Page:showPage', $content);
 
