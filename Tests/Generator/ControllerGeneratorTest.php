@@ -85,6 +85,7 @@ class ControllerGeneratorTest extends GeneratorTest
             'public function deletePageAction($id)',
             '@Template()',
             '@Template("FooBarBundle:Page:pages_list.html.twig")',
+            'return array(',
             'return $this->render(\'FooBarBundle:Page:deletePage.html.twig\', array(',
         );
         foreach ($strings as $string) {
