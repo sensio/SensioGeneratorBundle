@@ -59,12 +59,6 @@ class ControllerGeneratorTest extends GeneratorTest
                 'placeholders' => array('max_count'),
                 'template' => 'FooBarBundle:Page:pages_list.html.twig',
             ),
-            2 => array(
-                'name' => 'deletePageAction',
-                'route' => '/post/{id}/delete',
-                'placeholders' => array('id'),
-                'template' => 'default',
-            ),
         );
 
         $generator->generate($this->getBundle(), 'Page', 'annotation', 'twig', $actions);
@@ -72,7 +66,6 @@ class ControllerGeneratorTest extends GeneratorTest
         $files = array(
             'Resources/views/Page/showPage.html.twig',
             'Resources/views/Page/pages_list.html.twig',
-            'Resources/views/Page/deletePage.html.twig',
         );
         foreach ($files as $file) {
             $this->assertTrue(file_exists($this->tmpDir.'/'.$file), sprintf('%s has been generated', $file));
@@ -82,11 +75,9 @@ class ControllerGeneratorTest extends GeneratorTest
         $strings = array(
             'public function showPageAction($id, $slug)',
             'public function getListOfPagesAction($max_count)',
-            'public function deletePageAction($id)',
             '@Template()',
             '@Template("FooBarBundle:Page:pages_list.html.twig")',
             'return array(',
-            'return $this->render(\'FooBarBundle:Page:deletePage.html.twig\', array(',
         );
         foreach ($strings as $string) {
             $this->assertContains($string, $content);
