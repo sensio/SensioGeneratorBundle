@@ -22,6 +22,7 @@ use Sensio\Bundle\GeneratorBundle\Generator\DoctrineCrudGenerator;
 use Sensio\Bundle\GeneratorBundle\Generator\DoctrineFormGenerator;
 use Sensio\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
 use Doctrine\Bundle\DoctrineBundle\Mapping\MetadataFactory;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 /**
  * Generates a CRUD for a Doctrine entity.
