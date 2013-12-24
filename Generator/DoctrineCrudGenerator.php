@@ -253,6 +253,7 @@ class DoctrineCrudGenerator extends Generator
             'entity'            => $this->entity,
             'route_prefix'      => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
+            'fields'            => $this->metadata->fieldMappings,
             'actions'           => $this->actions,
         ));
     }
@@ -269,6 +270,7 @@ class DoctrineCrudGenerator extends Generator
             'route_name_prefix' => $this->routeNamePrefix,
             'entity'            => $this->entity,
             'bundle'            => $this->bundle->getName(),
+            'fields'            => $this->metadata->fieldMappings,            
             'actions'           => $this->actions,
         ));
     }
