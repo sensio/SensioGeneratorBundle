@@ -17,7 +17,7 @@ class BundleGeneratorTest extends GeneratorTest
 {
     public function testGenerateYaml()
     {
-        $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', false);
+        $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', false, true);
 
         $files = array(
             'FooBarBundle.php',
@@ -44,9 +44,34 @@ class BundleGeneratorTest extends GeneratorTest
         $this->assertContains('Hello {{ name }}!', $content);
     }
 
+    public function testGenerateYamlNoController()
+    {
+        $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', false, false);
+
+        $files = array(
+            'FooBarBundle.php',
+            'Resources/config/services.yml',
+            'DependencyInjection/Configuration.php',
+            'DependencyInjection/FooBarExtension.php',
+        );
+        $notExistingFiles = array(
+            'Resources/config/routing.yml',
+            'Controller/DefaultController.php',
+            'Resources/views/Default/index.html.twig',
+            'Tests/Controller/DefaultControllerTest.php',
+        );
+
+        foreach ($files as $file) {
+            $this->assertTrue(file_exists($this->tmpDir.'/Foo/BarBundle/'.$file), sprintf('%s has been generated', $file));
+        }
+        foreach ($notExistingFiles as $file) {
+            $this->assertFalse(file_exists($this->tmpDir.'/Foo/BarBundle/'.$file), sprintf('%s has not been generated', $file));
+        }
+    }
+
     public function testGenerateAnnotation()
     {
-        $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'annotation', false);
+        $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'annotation', false, true);
 
         $this->assertFalse(file_exists($this->tmpDir.'/Foo/BarBundle/Resources/config/routing.yml'));
         $this->assertFalse(file_exists($this->tmpDir.'/Foo/BarBundle/Resources/config/routing.xml'));
@@ -55,13 +80,22 @@ class BundleGeneratorTest extends GeneratorTest
         $this->assertContains('@Route("/hello/{name}"', $content);
     }
 
+    public function testGenerateAnnotationNoController()
+    {
+        $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'annotation', false, false);
+
+        $this->assertFalse(file_exists($this->tmpDir.'/Foo/BarBundle/Resources/config/routing.yml'));
+        $this->assertFalse(file_exists($this->tmpDir.'/Foo/BarBundle/Resources/config/routing.yml'));
+        $this->assertFalse(file_exists($this->tmpDir.'/Foo/BarBundle/Controller/DefaultController.php'));
+    }
+
     public function testDirIsFile()
     {
         $this->filesystem->mkdir($this->tmpDir.'/Foo');
         $this->filesystem->touch($this->tmpDir.'/Foo/BarBundle');
 
         try {
-            $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', false);
+            $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', false, true);
             $this->fail('An exception was expected!');
         } catch (\RuntimeException $e) {
             $this->assertEquals(sprintf('Unable to generate the bundle as the target directory "%s" exists but is a file.', realpath($this->tmpDir.'/Foo/BarBundle')), $e->getMessage());
@@ -74,7 +108,7 @@ class BundleGeneratorTest extends GeneratorTest
         $this->filesystem->chmod($this->tmpDir.'/Foo/BarBundle', 0444);
 
         try {
-            $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', false);
+            $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', false, true);
             $this->fail('An exception was expected!');
         } catch (\RuntimeException $e) {
             $this->filesystem->chmod($this->tmpDir.'/Foo/BarBundle', 0777);
@@ -88,7 +122,7 @@ class BundleGeneratorTest extends GeneratorTest
         $this->filesystem->touch($this->tmpDir.'/Foo/BarBundle/somefile');
 
         try {
-            $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', false);
+            $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', false, true);
             $this->fail('An exception was expected!');
         } catch (\RuntimeException $e) {
             $this->filesystem->chmod($this->tmpDir.'/Foo/BarBundle', 0777);
@@ -100,7 +134,7 @@ class BundleGeneratorTest extends GeneratorTest
     {
         $this->filesystem->mkdir($this->tmpDir.'/Foo/BarBundle');
 
-        $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', false);
+        $this->getGenerator()->generate('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', false, true);
     }
 
     protected function getGenerator()

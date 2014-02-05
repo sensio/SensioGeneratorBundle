@@ -1,3 +1,5 @@
+{% if include_example_controller %}
 {{ extension_alias }}_homepage:
     path:  /hello/{name}
     defaults: { _controller: {{ bundle }}:Default:index }
+{% endif %}

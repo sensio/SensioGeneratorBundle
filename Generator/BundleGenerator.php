@@ -28,7 +28,7 @@ class BundleGenerator extends Generator
         $this->filesystem = $filesystem;
     }
 
-    public function generate($namespace, $bundle, $dir, $format, $structure)
+    public function generate($namespace, $bundle, $dir, $format, $structure, $controller)
     {
         $dir .= '/'.strtr($namespace, '\\', '/');
         if (file_exists($dir)) {
@@ -46,19 +46,23 @@ class BundleGenerator extends Generator
 
         $basename = substr($bundle, 0, -6);
         $parameters = array(
-            'namespace' => $namespace,
-            'bundle'    => $bundle,
-            'format'    => $format,
-            'bundle_basename' => $basename,
-            'extension_alias' => Container::underscore($basename),
+            'namespace'                     => $namespace,
+            'bundle'                        => $bundle,
+            'format'                        => $format,
+            'bundle_basename'               => $basename,
+            'extension_alias'               => Container::underscore($basename),
+            'include_example_controller'    => $controller,
         );
 
         $this->renderFile('bundle/Bundle.php.twig', $dir.'/'.$bundle.'.php', $parameters);
         $this->renderFile('bundle/Extension.php.twig', $dir.'/DependencyInjection/'.$basename.'Extension.php', $parameters);
         $this->renderFile('bundle/Configuration.php.twig', $dir.'/DependencyInjection/Configuration.php', $parameters);
-        $this->renderFile('bundle/DefaultController.php.twig', $dir.'/Controller/DefaultController.php', $parameters);
-        $this->renderFile('bundle/DefaultControllerTest.php.twig', $dir.'/Tests/Controller/DefaultControllerTest.php', $parameters);
-        $this->renderFile('bundle/index.html.twig.twig', $dir.'/Resources/views/Default/index.html.twig', $parameters);
+
+        if ($controller) {
+            $this->renderFile('bundle/DefaultController.php.twig', $dir.'/Controller/DefaultController.php', $parameters);
+            $this->renderFile('bundle/DefaultControllerTest.php.twig', $dir.'/Tests/Controller/DefaultControllerTest.php', $parameters);
+            $this->renderFile('bundle/index.html.twig.twig', $dir.'/Resources/views/Default/index.html.twig', $parameters);
+        }
 
         if ('xml' === $format || 'annotation' === $format) {
             $this->renderFile('bundle/services.xml.twig', $dir.'/Resources/config/services.xml', $parameters);
@@ -66,7 +70,7 @@ class BundleGenerator extends Generator
             $this->renderFile('bundle/services.'.$format.'.twig', $dir.'/Resources/config/services.'.$format, $parameters);
         }
 
-        if ('annotation' != $format) {
+        if ('annotation' != $format && $controller) {
             $this->renderFile('bundle/routing.'.$format.'.twig', $dir.'/Resources/config/routing.'.$format, $parameters);
         }
 

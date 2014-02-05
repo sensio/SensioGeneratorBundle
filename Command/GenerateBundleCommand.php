@@ -40,6 +40,7 @@ class GenerateBundleCommand extends GeneratorCommand
                 new InputOption('bundle-name', '', InputOption::VALUE_REQUIRED, 'The optional bundle name'),
                 new InputOption('format', '', InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)'),
                 new InputOption('structure', '', InputOption::VALUE_NONE, 'Whether to generate the whole directory structure'),
+                new InputOption('no-controller', '', InputOption::VALUE_NONE, 'Whether to generate an example controller with a first route.'),
             ))
             ->setDescription('Generates a bundle')
             ->setHelp(<<<EOT
@@ -101,6 +102,7 @@ EOT
         }
         $format = Validators::validateFormat($input->getOption('format'));
         $structure = $input->getOption('structure');
+        $withController = !$input->getOption('no-controller');
 
         $dialog->writeSection($output, 'Bundle generation');
 
@@ -109,7 +111,7 @@ EOT
         }
 
         $generator = $this->getGenerator();
-        $generator->generate($namespace, $bundle, $dir, $format, $structure);
+        $generator->generate($namespace, $bundle, $dir, $format, $structure, $withController);
 
         $output->writeln('Generating the bundle code: <info>OK</info>');
 
@@ -122,8 +124,10 @@ EOT
         // register the bundle in the Kernel class
         $runner($this->updateKernel($dialog, $input, $output, $this->getContainer()->get('kernel'), $namespace, $bundle));
 
-        // routing
-        $runner($this->updateRouting($dialog, $input, $output, $bundle, $format));
+        if ($withController) {
+            // routing
+            $runner($this->updateRouting($dialog, $input, $output, $bundle, $format));
+        }
 
         $dialog->writeGeneratorSummary($output, $errors);
     }
@@ -239,6 +243,12 @@ EOT
             $structure = true;
         }
         $input->setOption('structure', $structure);
+
+        $withController = !$input->getOption('no-controller');
+        if (!$withController && $dialog->askConfirmation($output, $dialog->getQuestion('Do you want to generate an example controller with a first route?', 'yes', '?'), false)) {
+            $withController = true;
+        }
+        $input->setOption('no-controller', $withController);
 
         // summary
         $output->writeln(array(
