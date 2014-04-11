@@ -48,7 +48,6 @@ class RoutingManipulator extends Manipulator
     {
         $current = '';
         $code = sprintf("%s:\n", Container::underscore(substr($bundle, 0, -6)).('/' !== $prefix ? '_'.str_replace('/', '_', substr($prefix, 1)) : ''));
-        
         if (file_exists($this->file)) {
             $current = file_get_contents($this->file);
 
