@@ -196,7 +196,7 @@ EOT
         }
 
         if (null === $dir) {
-            $dir = dirname($this->getContainer()->getParameter('kernel.root_dir')).'/src';
+            $dir = dirname(realpath($this->getContainer()->getParameter('kernel.root_dir'))).'/src';
 
             $output->writeln(array(
                 '',
