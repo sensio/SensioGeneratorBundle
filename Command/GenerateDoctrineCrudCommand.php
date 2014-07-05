@@ -144,7 +144,22 @@ EOT
             '',
         ));
 
-        $entity = $dialog->askAndValidate($output, $dialog->getQuestion('The Entity shortcut name', $input->getOption('entity')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'), false, $input->getOption('entity'));
+
+        /* @var $entityManager \Doctrine\ORM\EntityManager */
+        $entityManager = $this->getContainer()->get('doctrine')->getManager();
+
+        $entityClassNames = $entityManager->getConfiguration()
+          ->getMetadataDriverImpl()
+          ->getAllClassNames();
+
+        $bundleNames = array();
+        foreach ($entityClassNames as $classNamespace) {
+            $pos = strpos($classNamespace, '\\Entity\\');
+            $bundle = substr($classNamespace, 0, $pos) . ':' . substr($classNamespace, $pos + 7);
+            $bundleNames[] = str_replace('\\','', $bundle);
+        }
+
+        $entity = $dialog->askAndValidate($output, $dialog->getQuestion('The Entity shortcut name', $input->getOption('entity')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'), false, $input->getOption('entity'), $bundleNames);
         $input->setOption('entity', $entity);
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
 
