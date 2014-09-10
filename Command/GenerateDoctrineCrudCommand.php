@@ -116,7 +116,7 @@ EOT
 
         // form
         if ($withWrite) {
-            $this->generateForm($bundle, $entity, $metadata);
+            $this->generateForm($bundle, $entity, $metadata, $forceOverwrite);
             $output->writeln('Generating the Form code: <info>OK</info>');
         }
 
@@ -200,13 +200,9 @@ EOT
     /**
      * Tries to generate forms if they don't exist yet and if we need write operations on entities.
      */
-    protected function generateForm($bundle, $entity, $metadata)
+    protected function generateForm($bundle, $entity, $metadata, $forceOverwrite)
     {
-        try {
-            $this->getFormGenerator($bundle)->generate($bundle, $entity, $metadata[0]);
-        } catch (\RuntimeException $e ) {
-            // form already exists
-        }
+        $this->getFormGenerator($bundle)->generate($bundle, $entity, $metadata[0],$forceOverwrite);
     }
 
     protected function updateRouting(DialogHelper $dialog, InputInterface $input, OutputInterface $output, BundleInterface $bundle, $format, $entity, $prefix)
