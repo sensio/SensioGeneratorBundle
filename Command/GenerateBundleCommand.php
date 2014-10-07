@@ -40,6 +40,7 @@ class GenerateBundleCommand extends GeneratorCommand
                 new InputOption('bundle-name', '', InputOption::VALUE_REQUIRED, 'The optional bundle name'),
                 new InputOption('format', '', InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)'),
                 new InputOption('structure', '', InputOption::VALUE_NONE, 'Whether to generate the whole directory structure'),
+                new InputOption('shared', '', InputOption::VALUE_NONE, 'Are you planning on using/sharing this bundle across multiple applications?'),
             ))
             ->setDescription('Generates a bundle')
             ->setHelp(<<<EOT
@@ -90,7 +91,9 @@ EOT
             }
         }
 
-        $namespace = Validators::validateBundleNamespace($input->getOption('namespace'));
+        $shared = $input->getOption('shared');
+
+        $namespace = Validators::validateBundleNamespace($input->getOption('namespace'), $input->getOption('shared'));
         if (!$bundle = $input->getOption('bundle-name')) {
             $bundle = strtr($namespace, array('\\' => ''));
         }
@@ -109,7 +112,7 @@ EOT
         }
 
         $generator = $this->getGenerator();
-        $generator->generate($namespace, $bundle, $dir, $format, $structure);
+        $generator->generate($namespace, $bundle, $dir, $format, $structure, $shared);
 
         $output->writeln('Generating the bundle code: <info>OK</info>');
 
@@ -133,10 +136,19 @@ EOT
         $dialog = $this->getDialogHelper();
         $dialog->writeSection($output, 'Welcome to the Symfony2 bundle generator');
 
+        // shared
+        $shared = $input->getOption('shared');
+
+        if (!$shared && $dialog->askConfirmation($output, '<question>Are you planning on using/sharing this bundle across multiple applications [no]?</question>', false)) {
+            $shared = true;
+        }
+
+        $shared = $input->setOption('shared', $shared);
+
         // namespace
         $namespace = null;
         try {
-            $namespace = $input->getOption('namespace') ? Validators::validateBundleNamespace($input->getOption('namespace')) : null;
+            $namespace = $input->getOption('namespace') ? Validators::validateBundleNamespace($input->getOption('namespace'), $input->getOption('shared')) : null;
         } catch (\Exception $error) {
             $output->writeln($dialog->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
         }
