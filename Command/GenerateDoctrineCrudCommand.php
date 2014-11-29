@@ -127,6 +127,8 @@ EOT
         // routing
         if ('annotation' != $format) {
             $runner($this->updateRouting($dialog, $input, $output, $bundle, $format, $entity, $prefix));
+        } else {
+            $runner($this->updateAnnotationRouting($bundle, $entity, $prefix));
         }
 
         $dialog->writeGeneratorSummary($output, $errors);
@@ -243,6 +245,21 @@ EOT
                 $help,
                 '',
             );
+        }
+    }
+
+    protected function updateAnnotationRouting(BundleInterface $bundle, $entity, $prefix)
+    {
+        $rootDir = $this->getContainer()->getParameter('kernel.root_dir');
+
+        $routing = new RoutingManipulator($rootDir.'/config/routing.yml');
+
+        if (!$routing->hasResourceInAnnotation($bundle->getName())) {
+
+            $parts = explode('\\', $entity);
+            $controller = array_pop($parts);
+
+            $ret = $routing->addAnnotationController($bundle->getName(), $controller);
         }
     }
 
