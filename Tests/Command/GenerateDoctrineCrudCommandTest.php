@@ -132,8 +132,34 @@ class GenerateDoctrineCrudCommandTest extends GenerateCommandTest
         $registry
             ->expects($this->any())
             ->method('getAliasNamespace')
-            ->will($this->returnValue('Foo\\FooBundle\\Entity'))
-        ;
+            ->will($this->returnValue('Foo\\FooBundle\\Entity'));
+
+        $mappingDriver = $this->getMock('Doctrine\\Common\\Persistence\\Mapping\\Driver\\MappingDriver');
+        $mappingDriver
+            ->expects($this->any())
+            ->method('getAllClassNames')
+            ->will($this->returnValue(array('Acme\\BlogBundle\\Entity\\Blog\\Post')));
+
+        $configuration = $this->getMock('Doctrine\\ORM\\Configuration');
+        $configuration
+            ->expects($this->any())
+            ->method('getMetadataDriverImpl')
+            ->will($this->returnValue($mappingDriver));
+        $configuration
+            ->expects($this->any())
+            ->method('getEntityNamespaces')
+            ->will($this->returnValue(array('AcmeBlogBundle' => 'Acme\\BlogBundle\\Entity')));
+
+        $manager = $this->getMock('Doctrine\\ORM\\EntityManagerInterface');
+        $manager
+            ->expects($this->any())
+            ->method('getConfiguration')
+            ->will($this->returnValue($configuration));
+
+        $registry
+            ->expects($this->any())
+            ->method('getManager')
+            ->will($this->returnValue($manager));
 
         $container->set('doctrine', $registry);
 
