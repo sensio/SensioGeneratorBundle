@@ -13,7 +13,6 @@ namespace Sensio\Bundle\GeneratorBundle\Command;
 
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper;
 use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 

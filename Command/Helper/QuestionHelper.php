@@ -14,7 +14,6 @@ namespace Sensio\Bundle\GeneratorBundle\Command\Helper;
 use Symfony\Component\Console\Helper\QuestionHelper as BaseQuestionHelper;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Generates bundles.
@@ -60,7 +59,8 @@ class QuestionHelper extends BaseQuestionHelper
         ));
     }
 
-    public function getQuestion($question, $default, $sep = ':') {
+    public function getQuestion($question, $default, $sep = ':')
+    {
         return $default ? sprintf('<info>%s</info> [<comment>%s</comment>]%s ', $question, $default, $sep) : sprintf('<info>%s</info>%s ', $question, $sep);
     }
 }

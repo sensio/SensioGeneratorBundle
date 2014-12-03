@@ -241,7 +241,7 @@ EOT
                 '',
             ));
             $question = new Question($questionHelper->getQuestion('Target directory', $dir), $dir);
-            $question->setValidator( function ($dir) use ($bundle, $namespace) {
+            $question->setValidator(function ($dir) use ($bundle, $namespace) {
                     return Validators::validateTargetDir($dir, $bundle, $namespace);
             });
             $dir = $questionHelper->ask($input, $output, $question);
