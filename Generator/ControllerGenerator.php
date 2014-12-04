@@ -41,14 +41,20 @@ class ControllerGenerator extends Generator
             throw new \RuntimeException(sprintf('Controller "%s" already exists', $controller));
         }
 
+        $path = preg_split("/[\\\\|\/]/", $controller);
+        $namespacePath = implode("\\", array_slice($path, 0, count($path) - 1));
+
+        if (!empty($namespacePath)) {
+            $namespacePath = "\\".$namespacePath;
+        }
+
         $parameters = array(
-            'namespace'  => $bundle->getNamespace(),
             'bundle'     => $bundle->getName(),
             'format'     => array(
                 'routing'    => $routeFormat,
                 'templating' => $templateFormat,
             ),
-            'controller' => $controller,
+            'controller' => end($path),
         );
 
         foreach ($actions as $i => $action) {
@@ -74,8 +80,16 @@ class ControllerGenerator extends Generator
 
         $parameters['actions'] = $actions;
 
-        $this->renderFile('controller/Controller.php.twig', $controllerFile, $parameters);
-        $this->renderFile('controller/ControllerTest.php.twig', $dir.'/Tests/Controller/'.$controller.'ControllerTest.php', $parameters);
+        $this->renderFile(
+            'controller/Controller.php.twig',
+            $controllerFile,
+            $parameters + array("namespace" => $bundle->getNamespace()."\\Controller".$namespacePath)
+        );
+        $this->renderFile(
+            'controller/ControllerTest.php.twig',
+            $dir.'/Tests/Controller/'.$controller.'ControllerTest.php',
+            $parameters + array("namespace" => $bundle->getNamespace()."\\Tests\\Controller".$namespacePath)
+        );
     }
 
     public function generateRouting(BundleInterface $bundle, $controller, array $action, $format)
