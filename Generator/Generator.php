@@ -18,7 +18,7 @@ namespace Sensio\Bundle\GeneratorBundle\Generator;
  */
 class Generator
 {
-    private $skeletonDirs;
+    protected $skeletonDirs;
 
     /**
      * Sets an array of directories to look for templates.
