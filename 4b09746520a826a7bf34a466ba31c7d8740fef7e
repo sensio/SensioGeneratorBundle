@@ -1,0 +1,5 @@
+---------------------------------------------------------------------------
+
+by WouterJ at 2015-02-10T23:45:37Z
+
+@fabpot fabbot should be updated to not consider `.yml.twig` as being valid YAML files (Twig syntax isn't valid Yaml).
