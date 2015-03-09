@@ -28,7 +28,7 @@ class BundleGenerator extends Generator
         $this->filesystem = $filesystem;
     }
 
-    public function generate($namespace, $bundle, $dir, $format, $structure)
+    public function generate($namespace, $bundle, $dir, $format, $servicesFormat, $structure)
     {
         $dir .= '/'.strtr($namespace, '\\', '/');
         if (file_exists($dir)) {
@@ -49,6 +49,7 @@ class BundleGenerator extends Generator
             'namespace' => $namespace,
             'bundle'    => $bundle,
             'format'    => $format,
+            'services_format' => $servicesFormat,
             'bundle_basename' => $basename,
             'extension_alias' => Container::underscore($basename),
         );
@@ -60,11 +61,7 @@ class BundleGenerator extends Generator
         $this->renderFile('bundle/DefaultControllerTest.php.twig', $dir.'/Tests/Controller/DefaultControllerTest.php', $parameters);
         $this->renderFile('bundle/index.html.twig.twig', $dir.'/Resources/views/Default/index.html.twig', $parameters);
 
-        if ('xml' === $format || 'annotation' === $format) {
-            $this->renderFile('bundle/services.xml.twig', $dir.'/Resources/config/services.xml', $parameters);
-        } else {
-            $this->renderFile('bundle/services.'.$format.'.twig', $dir.'/Resources/config/services.'.$format, $parameters);
-        }
+        $this->renderFile('bundle/services.'.$servicesFormat.'.twig', $dir.'/Resources/config/services.'.$servicesFormat, $parameters);
 
         if ('annotation' != $format) {
             $this->renderFile('bundle/routing.'.$format.'.twig', $dir.'/Resources/config/routing.'.$format, $parameters);

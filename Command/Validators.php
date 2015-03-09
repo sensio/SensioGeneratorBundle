@@ -96,6 +96,17 @@ class Validators
         return $format;
     }
 
+    public static function validateServicesFormat($format)
+    {
+        $format = strtolower($format);
+
+        if (!in_array($format, array('php', 'xml', 'yml'))) {
+            throw new \RuntimeException(sprintf('Format "%s" is not supported for services.', $format));
+        }
+
+        return $format;
+    }
+
     public static function validateEntityName($entity)
     {
         if (false === strpos($entity, ':')) {

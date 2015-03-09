@@ -41,6 +41,7 @@ class GenerateBundleCommand extends GeneratorCommand
                 new InputOption('dir', '', InputOption::VALUE_REQUIRED, 'The directory where to create the bundle'),
                 new InputOption('bundle-name', '', InputOption::VALUE_REQUIRED, 'The optional bundle name'),
                 new InputOption('format', '', InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)'),
+                new InputOption('services-format', '', InputOption::VALUE_REQUIRED, 'Use the format for services configuration file (php, xml, or yml)'),
                 new InputOption('structure', '', InputOption::VALUE_NONE, 'Whether to generate the whole directory structure'),
             ))
             ->setDescription('Generates a bundle')
@@ -103,6 +104,13 @@ EOT
             $input->setOption('format', 'annotation');
         }
         $format = Validators::validateFormat($input->getOption('format'));
+        if (null === $input->getOption('services-format')) {
+            $input->setOption('services-format', $input->getOption('format'));
+        }
+        if ('annotation' === $input->getOption('services-format')) {
+            $input->setOption('services-format', 'yml');
+        }
+        $servicesFormat = Validators::validateServicesFormat($input->getOption('services-format'));
         $structure = $input->getOption('structure');
 
         $questionHelper->writeSection($output, 'Bundle generation');
@@ -112,7 +120,7 @@ EOT
         }
 
         $generator = $this->getGenerator();
-        $generator->generate($namespace, $bundle, $dir, $format, $structure);
+        $generator->generate($namespace, $bundle, $dir, $format, $servicesFormat, $structure);
 
         $output->writeln('Generating the bundle code: <info>OK</info>');
 
@@ -270,6 +278,23 @@ EOT
             $input->setOption('format', $format);
         }
 
+        $servicesFormat = null;
+        try {
+            $servicesFormat = $input->getOption('services-format') ? Validators::validateServicesFormat($input->getOption('services-format')) : $format;
+        } catch (\Exception $error) {
+            $output->writeln($dialog->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
+        }
+
+        if (null === $servicesFormat || 'annotation' == $servicesFormat) {
+            $output->writeln(array(
+                '',
+                'Determine the format to use for the generated services configuration.',
+                '',
+            ));
+            $servicesFormat = $dialog->askAndValidate($output, $dialog->getQuestion('Services configuration format (yml, xml, or php)', $input->getOption('services-format')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateServicesFormat'), false, $input->getOption('services-format'));
+            $input->setOption('services-format', $servicesFormat);
+        }
+
         // optional files to generate
         $output->writeln(array(
             '',
@@ -286,11 +311,15 @@ EOT
         $input->setOption('structure', $structure);
 
         // summary
+        $services = '';
+        if ($servicesFormat != $format) {
+            $services = sprintf(" (\"<info>%s</info>\" format for the services)", $servicesFormat);
+        }
         $output->writeln(array(
             '',
             $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
             '',
-            sprintf("You are going to generate a \"<info>%s\\%s</info>\" bundle\nin \"<info>%s</info>\" using the \"<info>%s</info>\" format.", $namespace, $bundle, $dir, $format),
+            sprintf("You are going to generate a \"<info>%s\\%s</info>\" bundle\nin \"<info>%s</info>\" using the \"<info>%s</info>\" format%s.", $namespace, $bundle, $dir, $format, $services),
             '',
         ));
     }
