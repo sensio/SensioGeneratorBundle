@@ -102,4 +102,28 @@ class KernelManipulator extends Manipulator
             }
         }
     }
+
+    /**
+     * Remove the bundle from kernel.
+     *
+     * @param $bundle
+     *
+     * @return bool
+     */
+    public function removeBundle($bundle)
+    {
+        if (!$this->reflected->getFilename()) {
+            return false;
+        }
+
+        $file = file_get_contents($this->reflected->getFilename());
+        $cleanFile = str_replace(sprintf("            new %s(),\n", $bundle), '', $file);
+
+        if ($file !== $cleanFile) {
+            file_put_contents($this->reflected->getFilename(), $cleanFile);
+            return true;
+        }
+
+        return false;
+    }
 }
