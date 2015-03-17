@@ -1,0 +1,218 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2014-06-18T11:44:36Z
+
+I don't think the implementation of this is correct, but I think this is a good idea. I think the implementation is wrong because the Finder method just doesn't look right for me. I would:
+
+1) Use this to get all of the entities: https://github.com/doctrine/doctrine2/blob/master/lib/Doctrine/ORM/Tools/Console/Command/InfoCommand.php#L58
+
+2) Use the bundles (and `Bundle::getNamespace()` method) to replace the full namespaces of each of the above entities (because you'll get the full `Acme\DemoBundle\Entity\User` from (1)) with the bundle alias.
+
+Thanks!
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-06-18T14:41:33Z
+
+Agreed, and I wasn't happy with the implementation.
+
+By the way, thanks @weaverryan for ! I had completely forgotten this PR! ;)
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2014-09-22T15:40:39Z
+
+Ping @csarrazi! Do you have some time to work on this?
+
+Thanks!
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-09-22T16:05:12Z
+
+Will do tomorrow night. I had a bit of trouble to get some personal time, lately! ;)
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2014-09-22T16:19:36Z
+
+No worries!
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-09-29T22:17:27Z
+
+WIP
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-09-30T07:29:42Z
+
+@weaverryan. Done, with tests too.
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-09-30T11:28:22Z
+
+Oh, boy, I shouldn't code after 9:00pm...
+
+    foreach ($this->getContainer()->get('kernel')->getBundles() as $bundle) {
+        $bundles[$bundle->getName().':'] = $bundle->getNamespace().'\Entity\\';
+    }
+
+    $bundles = array_flip($bundles);
+
+Updated to
+
+    foreach ($this->getContainer()->get('kernel')->getBundles() as $bundle) {
+        $bundles[$bundle->getNamespace().'\Entity\\'] = $bundle->getName().':';
+    }
+
+:expressionless: ...
+
+---------------------------------------------------------------------------
+
+by fabpot at 2014-10-01T06:59:11Z
+
+ping @weaverryan
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2014-10-02T13:45:00Z
+
+@csarrazi This works *perfectly*, great work!
+
+But, I realized that my original suggestion on the implementation was incomplete - we have access to the *real* namespace aliases from Doctrine and can use that list (instead of assuming `FooBundle:Bar` maps to the Entity directory of that bundle and no other aliases exist) to help transform from FQN to alias. While I was playing with this, I hacked up an implementation: https://github.com/weaverryan/SensioGeneratorBundle/commit/4c03db404f496558bce743e2cc1acc861bb351f7
+
+Can you adapt that into your code? I would actually like to see my ugly algorithm isolated to its own class and unit tested - that would make this much easier to merge :). Also, some other commands might use this - like `GenerateDoctrineFormCommand`, which also needs an entity. We don't need to add that in this PR, but you can if you want.
+
+Does this all make sense? Thanks so much for your work on this!
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-10-02T14:48:12Z
+
+@weaverryan Sure! I'll work on this tomorrow evening, after our hackday ;)
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-10-04T21:45:56Z
+
+@weaverryan Done. I took the opportunity to optimize your algorithm (doing a single loop, instead of doing two `array_map` + one `array_flip`). I also created a reusable class and service for handling auto completion. Didn't create an interface, though (I felt it was a bit overkill).
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2014-10-06T13:37:39Z
+
+@csarrazi I'm very happy you made those improvements!
+
+I just added a few minor comments!
+
+And thanks for your fast work :)
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-10-06T13:50:21Z
+
+I'll do the remaining work tonight. Thanks for the feedback! :)
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2014-10-06T20:04:41Z
+
+@csarrazi My pleasure - thanks for doing all the actual work :p.
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-10-06T20:10:21Z
+
+@weaverryan Done. Also squashed all the work in a single commit.
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-10-17T08:11:10Z
+
+Ping @weaverryan
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-12-05T13:00:08Z
+
+Rebased code against master to fix merge conflict.
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-12-05T13:04:48Z
+
+Build fails because Travis cannot pull dependencies in the HHVM build.
+
+Ping @weaverryan
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-12-27T19:19:19Z
+
+Ping @fabpot @weaverryan
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2014-12-29T11:49:20Z
+
+For now, it is only needed in the GenerateDoctrineCrud command. However, this feature enables the use of the autocompletion for all other doctrine commands (which is the goal).
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2015-01-23T22:00:04Z
+
+Pong @weaverryan
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2015-02-17T13:39:04Z
+
+Ping anyone? ;)
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-02-17T13:40:02Z
+
+Hey @csarrazi - thanks for pinging me - I'll take a look at this soon - my schedule has been crushing me lately - but this is in my inbox/on my mind!
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2015-02-17T13:50:38Z
+
+No harm done, @weaverryan !
+I do know what it is to have a very busy schedule! ;)
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-03-15T14:25:56Z
+
+Hey @csarrazi!
+
+This looks really really nice, and it's working *great* for me. Thanks for your patience on this with me :). The only change I personally want is to remove the `sensio_generator.command.auto_complete.entities` service, and have the command just instantiate this directly (and so, you might also remove `getAutocompleteEntities` from `GenerateDoctrineCommand`, otherwise you'd be instantiating an object there for 1 use, which is odd). I have two reasons: (A) I don't want to make the container bigger for a service that's almost never used (and only used in dev) and (B) *technically* if a user has multiple em's, this service only works for the "default" em. I don't think we should worry about supporting a non-default em in this command (or if we do, do it later), but if we keep this service, other people might start using it, and then eventually someone might want to create one of these services for *each* em. I think it's better to keep it just as a class, and other people can register it as a service if they want to use it.
+
+If you agree and can make this change, then I think we'll be ready!
+
+Thanks!
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2015-03-16T07:33:02Z
+
+I'm fine with the change. I'll push an update later during the week! :-)
+
+---------------------------------------------------------------------------
+
+by csarrazi at 2015-03-16T21:55:53Z
+
+Done, @weaverryan!
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-03-17T00:32:20Z
+
+:+1: from me, and I just tested it - works great! And fast updates too @csarrazi :)
+
+This is ready for a merge.
