@@ -1,0 +1,94 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2014-11-19T03:13:09Z
+
+Ah, and screenshots of different scenarios:
+
+![screen shot 2014-11-18 at 9 41 03 pm](https://cloud.githubusercontent.com/assets/121003/5100138/06890136-6f70-11e4-8167-516c552124dc.png)
+![screen shot 2014-11-18 at 9 42 14 pm](https://cloud.githubusercontent.com/assets/121003/5100136/06854c6c-6f70-11e4-962b-e18bae2feaac.png)
+![screen shot 2014-11-18 at 9 43 36 pm](https://cloud.githubusercontent.com/assets/121003/5100140/068b9d88-6f70-11e4-87b1-25af1b004f1a.png)
+![screen shot 2014-11-18 at 9 43 58 pm](https://cloud.githubusercontent.com/assets/121003/5100137/0686eaae-6f70-11e4-922c-95274871eca8.png)
+![screen shot 2014-11-18 at 9 44 19 pm](https://cloud.githubusercontent.com/assets/121003/5100139/068b3df2-6f70-11e4-8b12-33ad08606834.png)
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2014-11-19T08:06:23Z
+
+@weaverryan thanks for your impressive work! Before reviewing the code of your commits, I have two questions:
+
+  * Does the **Summary Before Generation** really add value to this command? Have you ever typed in **n** to avoid generating the bundle?
+  * Could we get rid of this sentence? **Use / instead of \ for the namespace delimiter to avoid any problem.**  I really hate it because it's distracting and this is something that a computer could take care of (str_replace could do the trick).
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2014-11-19T11:08:37Z
+
+@weaverryan I've tested this command with all kinds of option combinations and it always worked great for me.
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2014-11-19T16:08:17Z
+
+@javiereguiluz One last thing. Do you agree that for non-shared bundles that we should continue generating a `services.*ml` file? And if so, since we don't generate the `DependencyInjection` directory, should we add an import to `config.yml`? This is the gray area we were talking about, where people might choose to create more than one coupled-application bundles (I don't see the point, but a valid thing to do).
+
+Thanks!
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2014-11-19T16:18:40Z
+
+@weaverryan I agree with importing the `services.*ml` file directly from `app/config/config.yml` for this kind of non-shared bundles.
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2014-11-25T22:35:59Z
+
+This is now ready for review! As I mentioned in #315, I think we should merge that in the short-term, then put this into a new version. I'd also like to update several of the other commands for that new version.
+
+The last change - other than a new `Bundle` class to clean some things up - was to import the `services.xml/yml` file from `config.yml` if there is no DI directory. Everything should be good now. There are a lot of nice tests, but we'll still need some manual testers :).
+
+Thanks!
+
+---------------------------------------------------------------------------
+
+by fabpot at 2014-12-04T05:47:25Z
+
+Sorry about that, but this PR should be rebased as #321 removed the usage of the deprecated helpers.
+
+---------------------------------------------------------------------------
+
+by WouterJ at 2015-02-05T19:51:03Z
+
+ping @weaverryan
+
+---------------------------------------------------------------------------
+
+by fabpot at 2015-03-17T06:37:52Z
+
+@weaverryan Can you rebase this PR?
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-03-23T01:37:51Z
+
+This is ready to go again! And I have tested all the different paths I can find. Highlights:
+
+1) Added the `shared` option
+
+2) Removed the `structure` option
+
+3) The task now ALWAYS asks questions (even if the values are passed as args) unless you explicitly say `--no-interactive` (this drastically simplified the code)
+
+4) For non-shared bundles, you don't get a `DependencyInjection` directory, and your `services.yml` file is imported directly from `config.yml`.
+
+5) The signature to `BundleGenerator::generateBundle()` changed - there is now a nice `Bundle` class instead of passing around all the config for a bundle.
+
+@javiereguiluz if you have a few minutes to try this, it would probably help Fabien have the confidence to merge (since the diff is too big to really study).
+
+Thanks!
+
+---------------------------------------------------------------------------
+
+by fabpot at 2015-03-23T07:23:44Z
+
+As there are some "BC breaks", I've bumped the version to 3.0: 176ea172c9df471fd71eb9e6c0e5992f3cc06626
