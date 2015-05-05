@@ -1,0 +1,20 @@
+---------------------------------------------------------------------------
+
+by musonic at 2014-07-06T19:08:21Z
+
+The index action requires entity names to be pluralised to make sense. This is fine if the entity is named correctly in the singular but would be strange if the entity is named incorrectly.
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2014-10-29T13:24:55Z
+
+:+1:
+
+---------------------------------------------------------------------------
+
+by JHGitty at 2015-05-04T00:21:07Z
+
+This is great! :+1:
+
+ping @musonic ; ping @fabpot
+Why is it not merged?
