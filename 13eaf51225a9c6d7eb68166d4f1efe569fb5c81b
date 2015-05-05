@@ -1,0 +1,53 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-04-08T02:25:30Z
+
+@xelaris I'd say, remove the new question, and *always* put the class in the `Repository` namespace. I don't think BC is too important with a generator, and more importantly, I recently had some BC-breaking changes merged into the master branch, and we're planning on releasing a new version soon (so, old versions are BC, new version will break slightly).
+
+I want to keep things simple :)
+
+---------------------------------------------------------------------------
+
+by fabpot at 2015-04-08T05:10:13Z
+
+I agree with @weaverryan
+
+---------------------------------------------------------------------------
+
+by xelaris at 2015-04-08T18:51:00Z
+
+I like that. The PR is updated.
+
+---------------------------------------------------------------------------
+
+by gcds at 2015-04-25T14:45:50Z
+
+I came to write the same issue then saw this... Yes and please remove that question from generator or just make it default yes because who do not use Repository? :D
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-05-03T20:50:40Z
+
+I agree with @gcds! Especially since the repositories will be in their own directory, they're not "taking up space". So, I would:
+
+A) Automatically generate the repositories (don't ask the question)
+
+AAAND, if you're up for it @xelaris, I think it would also be cool to:
+
+B) We should print out a better summary on the bottom, that describes that the Entity file was created, (if YML or XML format) the *.xml/yml file was created and the Repository was created.
+
+Currently, the command finishes like this:
+![screen shot 2015-05-03 at 4 49 41 pm](https://cloud.githubusercontent.com/assets/121003/7446858/6b6c36e2-f1b4-11e4-8449-f0361b01dc33.png)
+
+I'd like to print out the above information - basically make it look like the end of the `generate:bundle` command that's on the master branch:
+
+![screen shot 2015-05-03 at 4 48 06 pm](https://cloud.githubusercontent.com/assets/121003/7446861/813c4fde-f1b4-11e4-9ce1-0bb73a5a723a.png)
+
+@xelaris What do you think about these?
+
+---------------------------------------------------------------------------
+
+by xelaris at 2015-05-03T23:47:27Z
+
+@weaverryan Sounds good to me. The PR is updated to address both points. In addition I removed the "Summery before generation" and its confirmation, like it was done for the bundle generation command - hoping it's welcome.
+![bildschirmfoto 2015-05-04 um 01 21 34](https://cloud.githubusercontent.com/assets/2466932/7447531/52c6e20e-f1ff-11e4-9903-5d89dcb8cf21.png)
