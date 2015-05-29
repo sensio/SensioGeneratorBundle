@@ -216,9 +216,32 @@ EOT
         }
         $output->writeln('');
 
-        $fieldValidator = function ($type) use ($types) {
+        $output->write('<info>Available relations:</info> ');
+
+        $relations = array('many_to_many', 'many_to_one', 'one_to_one', 'one_to_many');
+        foreach ($relations as $i => $relation) {
+            $count += strlen($relation);
+            $output->write(sprintf('<comment>%s</comment>', $relation));
+            if (count($relations) != $i + 1) {
+                $output->write(', ');
+            } else {
+                $output->write('.');
+            }
+        }
+        $output->writeln('');
+
+        $classNames = $this->getContainer()
+            ->get('doctrine')
+            ->getManager()
+            ->getConfiguration()
+            ->getMetadataDriverImpl()
+            ->getAllClassNames();
+
+        $mappings = array_merge($types, $relations);
+
+        $fieldValidator = function ($type) use ($mappings) {
             // FIXME: take into account user-defined field types
-            if (!in_array($type, $types)) {
+            if (!in_array($type, $mappings)) {
                 throw new \InvalidArgumentException(sprintf('Invalid type "%s".', $type));
             }
 
@@ -278,7 +301,7 @@ EOT
 
             $question = new Question($questionHelper->getQuestion('Field type', $defaultType), $defaultType);
             $question->setValidator($fieldValidator);
-            $question->setAutocompleterValues($types);
+            $question->setAutocompleterValues($mappings);
             $type = $questionHelper->ask($input, $output, $question);
 
             $data = array('columnName' => $columnName, 'fieldName' => lcfirst(Container::camelize($columnName)), 'type' => $type);
@@ -287,6 +310,48 @@ EOT
                 $question = new Question($questionHelper->getQuestion('Field length', 255), 255);
                 $question->setValidator($lengthValidator);
                 $data['length'] = $questionHelper->ask($input, $output, $question);
+            }
+
+            if ($type == 'one_to_many') {
+                $data['targetEntity'] = $dialog->ask($output, $dialog->getQuestion('Target Entity class', ''), '', $classNames);
+                $data['mappedBy'] = $dialog->ask($output, $dialog->getQuestion('Mapped by', ''));
+            }
+
+            if ($type == 'many_to_one') {
+                $data['targetEntity'] = $dialog->ask($output, $dialog->getQuestion('Target Entity class', ''), '', $classNames);
+                $data['inversedBy'] = $dialog->ask($output, $dialog->getQuestion('Inversed by', ''));
+                $joinColumnName = $dialog->ask($output, $dialog->getQuestion('Join Column Name', ''));
+                $data['joinColumn'] = array('name'=>$joinColumnName,'referencedColumnName'=>'id');
+            }
+
+            if ($type == 'one_to_one') {
+                $isOwningSide = $dialog->askConfirmation($output, $dialog->getQuestion('relationing Side?', ''), true);
+                $data['targetEntity'] = $dialog->ask($output, $dialog->getQuestion('Target Entity class', ''), '', $classNames);
+
+                if ($isOwningSide == true) {
+                    $data['inversedBy'] = $dialog->ask($output, $dialog->getQuestion('Inversed by', ''));
+                    $joinColumnName = $dialog->ask($output, $dialog->getQuestion('Join Column Name', ''));
+                    $data['joinColumn'] = array('name'=>$joinColumnName,'referencedColumnName'=>'id');
+                    $data['isOwningSide'] = true;
+                } else {
+                    $data['mappedBy'] = $dialog->ask($output, $dialog->getQuestion('Mapped by', ''));
+                    $data['isOwningSide'] = false;
+                }
+            }
+
+            if ($type == 'many_to_many') {
+                $isOwningSide = $dialog->askConfirmation($output, $dialog->getQuestion('Is Owning Side?', ''), true);
+                $data['targetEntity'] = $dialog->ask($output, $dialog->getQuestion('Target Entity class', ''), '', $classNames);
+
+                if($isOwningSide == true){
+                    $data['inversedBy'] = $dialog->ask($output, $dialog->getQuestion('Inversed by ', ''));
+                    $joinTableName = $dialog->ask($output, $dialog->getQuestion('Join Table Name', ''));
+                    $data['joinTable'] = array('name'=>$joinTableName);
+                    $data['isOwningSide'] = true;
+                }else{
+                    $data['mappedBy'] = $dialog->ask($output, $dialog->getQuestion('Mapped by', ''));
+                    $data['isOwningSide'] = false;
+                }
             }
 
             $fields[$columnName] = $data;
