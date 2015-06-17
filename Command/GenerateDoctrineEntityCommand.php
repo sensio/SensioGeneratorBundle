@@ -241,6 +241,14 @@ EOT
             return $length;
         };
 
+        $nullableValidator = function ($nullable) {
+            if (null === $nullableAsBool = filter_var($nullable, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)) {
+                throw new \InvalidArgumentException(sprintf('Invalid nullable "%s".', $nullable));
+            }
+
+            return $nullableAsBool;
+        };
+
         while (true) {
             $output->writeln('');
             $generator = $this->getGenerator();
@@ -287,6 +295,12 @@ EOT
                 $question = new Question($questionHelper->getQuestion('Field length', 255), 255);
                 $question->setValidator($lengthValidator);
                 $data['length'] = $questionHelper->ask($input, $output, $question);
+            }
+
+            $question = new Question($questionHelper->getQuestion('Is nullable', 'false'), false);
+            $question->setValidator($nullableValidator);
+            if ($nullable = $questionHelper->ask($input, $output, $question)) {
+                $data['nullable'] = $nullable;
             }
 
             $fields[$columnName] = $data;
