@@ -249,6 +249,38 @@ EOT
             return $nullableAsBool;
         };
 
+        $precisionValidator = function ($precision) {
+            if (!$precision) {
+                return $precision;
+            }
+
+            $result = filter_var($precision, FILTER_VALIDATE_INT, array(
+                'options' => array('min_range' => 1, 'max_range' => 65),
+            ));
+
+            if (false === $result) {
+                throw new \InvalidArgumentException(sprintf('Invalid precision "%s".', $precision));
+            }
+
+            return $precision;
+        };
+
+        $scaleValidator = function ($scale) {
+            if (!$scale) {
+                return $scale;
+            }
+
+            $result = filter_var($scale, FILTER_VALIDATE_INT, array(
+                'options' => array('min_range' => 0, 'max_range' => 30),
+            ));
+
+            if (false === $result) {
+                throw new \InvalidArgumentException(sprintf('Invalid scale "%s".', $scale));
+            }
+
+            return $scale;
+        };
+
         while (true) {
             $output->writeln('');
             $generator = $this->getGenerator();
@@ -295,6 +327,14 @@ EOT
                 $question = new Question($questionHelper->getQuestion('Field length', 255), 255);
                 $question->setValidator($lengthValidator);
                 $data['length'] = $questionHelper->ask($input, $output, $question);
+            } elseif ('decimal' === $type) {
+                $question = new Question($questionHelper->getQuestion('Precision', 2), 2);
+                $question->setValidator($precisionValidator);
+                $data['precision'] = $questionHelper->ask($input, $output, $question);
+
+                $question = new Question($questionHelper->getQuestion('Scale', 1), 1);
+                $question->setValidator($scaleValidator);
+                $data['scale'] = $questionHelper->ask($input, $output, $question);
             }
 
             $question = new Question($questionHelper->getQuestion('Is nullable', 'false'), false);
