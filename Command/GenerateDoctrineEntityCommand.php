@@ -328,11 +328,13 @@ EOT
                 $question->setValidator($lengthValidator);
                 $data['length'] = $questionHelper->ask($input, $output, $question);
             } elseif ('decimal' === $type) {
-                $question = new Question($questionHelper->getQuestion('Precision', 2), 2);
+                // 10 is the default value given in \Doctrine\DBAL\Schema\Column::$_precision
+                $question = new Question($questionHelper->getQuestion('Precision', 10), 10);
                 $question->setValidator($precisionValidator);
                 $data['precision'] = $questionHelper->ask($input, $output, $question);
 
-                $question = new Question($questionHelper->getQuestion('Scale', 1), 1);
+                // 0 is the default value given in \Doctrine\DBAL\Schema\Column::$_scale
+                $question = new Question($questionHelper->getQuestion('Scale', 0), 0);
                 $question->setValidator($scaleValidator);
                 $data['scale'] = $questionHelper->ask($input, $output, $question);
             }
