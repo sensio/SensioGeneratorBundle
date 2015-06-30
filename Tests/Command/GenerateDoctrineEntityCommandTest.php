@@ -42,9 +42,9 @@ class GenerateDoctrineEntityCommandTest extends GenerateCommandTest
             array(array(), "AcmeBlogBundle:Blog/Post\n", array('Blog\\Post', 'annotation', array())),
             array(array('--entity' => 'AcmeBlogBundle:Blog/Post'), '', array('Blog\\Post', 'annotation', array())),
             array(array(), "AcmeBlogBundle:Blog/Post\nyml\n\n", array('Blog\\Post', 'yml', array())),
-            array(array(), "AcmeBlogBundle:Blog/Post\nyml\ncreated_by\n\n255\nfalse\ndescription\ntext\nfalse\nupdated_at\ndatetime\ntrue\nrating\ndecimal\n5\n3\nfalse\n\n", array('Blog\\Post', 'yml', array(
+            array(array(), "AcmeBlogBundle:Blog/Post\nyml\ncreated_by\n\n255\nfalse\nfalse\ndescription\ntext\nfalse\ntrue\nupdated_at\ndatetime\ntrue\nfalse\nrating\ndecimal\n5\n3\nfalse\nfalse\n\n", array('Blog\\Post', 'yml', array(
                 array('fieldName' => 'createdBy', 'type' => 'string', 'length' => 255, 'columnName' => 'created_by'),
-                array('fieldName' => 'description', 'type' => 'text', 'columnName' => 'description'),
+                array('fieldName' => 'description', 'type' => 'text', 'unique' => true, 'columnName' => 'description'),
                 array('fieldName' => 'updatedAt', 'type' => 'datetimetz', 'nullable' => true, 'columnName' => 'updated_at'),
                 array('fieldName' => 'rating', 'type' => 'decimal', 'precision' => 5, 'scale' => 3, 'columnName' => 'rating'),
             ))),
@@ -79,8 +79,9 @@ class GenerateDoctrineEntityCommandTest extends GenerateCommandTest
     {
         return array(
             array(array('--entity' => 'AcmeBlogBundle:Blog/Post'), array('Blog\\Post', 'annotation', array())),
-            array(array('--entity' => 'AcmeBlogBundle:Blog/Post', '--format' => 'yml', '--fields' => 'created_by:string(255) description:text'), array('Blog\\Post', 'yml', array(
+            array(array('--entity' => 'AcmeBlogBundle:Blog/Post', '--format' => 'yml', '--fields' => 'created_by:string(255) updated_by:string(length=128 nullable=true) description:text'), array('Blog\\Post', 'yml', array(
                 array('fieldName' => 'created_by', 'type' => 'string', 'length' => 255),
+                array('fieldName' => 'updated_by', 'type' => 'string', 'length' => 128, 'nullable' => true),
                 array('fieldName' => 'description', 'type' => 'text', 'length' => ''),
             ))),
         );

@@ -172,16 +172,33 @@ EOT
         }
 
         $fields = array();
-        foreach (explode(' ', $input) as $value) {
+        foreach (preg_split('{(?:\([^\(]*\))(*SKIP)(*F)|\s+}', $input) as $value) {
             $elements = explode(':', $value);
             $name = $elements[0];
+            $fieldAttributes = [];
             if (strlen($name)) {
+                $fieldAttributes['fieldName'] = $name;
                 $type = isset($elements[1]) ? $elements[1] : 'string';
-                preg_match_all('/(.*)\((.*)\)/', $type, $matches);
-                $type = isset($matches[1][0]) ? $matches[1][0] : $type;
-                $length = isset($matches[2][0]) ? $matches[2][0] : null;
+                preg_match_all('{(.*)\((.*)\)}', $type, $matches);
+                $fieldAttributes['type'] = isset($matches[1][0]) ? $matches[1][0] : $type;
+                $fieldAttributes['length'] = null;
+                if (isset($matches[2][0]) && $fieldAttributes['length'] = $matches[2][0]) {
+                    $attributesFound = [];
+                    if (false !== strpos($fieldAttributes['length'], '=')) {
+                        $attributesFound = preg_match_all('{([^,= ]+)=([^,= ]+)}', $fieldAttributes['length'], $result);
+                        $attributesFound = array_combine($result[1], $result[2]);
+                    }
+                    $fieldAttributes = array_merge($fieldAttributes, $attributesFound);
+                    if (isset($fieldAttributes['nullable'])) {
+                        $fieldAttributes['nullable'] = (bool) $fieldAttributes['nullable'];
+                    }
+                    if (isset($fieldAttributes['unique'])) {
+                        $fieldAttributes['unique'] = (bool) $fieldAttributes['unique'];
+                    }
+                    $fieldAttributes['length'] = (int) $fieldAttributes['length'];
+                }
 
-                $fields[$name] = array('fieldName' => $name, 'type' => $type, 'length' => $length);
+                $fields[$name] = $fieldAttributes;
             }
         }
 
@@ -241,12 +258,12 @@ EOT
             return $length;
         };
 
-        $nullableValidator = function ($nullable) {
-            if (null === $nullableAsBool = filter_var($nullable, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)) {
-                throw new \InvalidArgumentException(sprintf('Invalid nullable "%s".', $nullable));
+        $boolValidator = function ($value) {
+            if (null === $valueAsBool = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)) {
+                throw new \InvalidArgumentException(sprintf('Invalid bool value "%s".', $value));
             }
 
-            return $nullableAsBool;
+            return $valueAsBool;
         };
 
         $precisionValidator = function ($precision) {
@@ -340,9 +357,15 @@ EOT
             }
 
             $question = new Question($questionHelper->getQuestion('Is nullable', 'false'), false);
-            $question->setValidator($nullableValidator);
+            $question->setValidator($boolValidator);
             if ($nullable = $questionHelper->ask($input, $output, $question)) {
                 $data['nullable'] = $nullable;
+            }
+
+            $question = new Question($questionHelper->getQuestion('Unique', 'false'), false);
+            $question->setValidator($boolValidator);
+            if ($unique = $questionHelper->ask($input, $output, $question)) {
+                $data['unique'] = $unique;
             }
 
             $fields[$columnName] = $data;
