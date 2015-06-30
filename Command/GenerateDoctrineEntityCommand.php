@@ -179,7 +179,7 @@ EOT
         foreach (preg_split('{(?:\([^\(]*\))(*SKIP)(*F)|\s+}', $input) as $value) {
             $elements = explode(':', $value);
             $name = $elements[0];
-            $fieldAttributes = [];
+            $fieldAttributes = array();
             if (strlen($name)) {
                 $fieldAttributes['fieldName'] = $name;
                 $type = isset($elements[1]) ? $elements[1] : 'string';
@@ -190,7 +190,7 @@ EOT
                     $fieldAttributes['length'] = $length;
                 }
                 if (isset($matches[2][0]) && $length = $matches[2][0]) {
-                    $attributesFound = [];
+                    $attributesFound = array();
                     if (false !== strpos($length, '=')) {
                         $attributesFound = preg_match_all('{([^,= ]+)=([^,= ]+)}', $length, $result);
                         $attributesFound = array_combine($result[1], $result[2]);
