@@ -79,10 +79,11 @@ class GenerateDoctrineEntityCommandTest extends GenerateCommandTest
     {
         return array(
             array(array('--entity' => 'AcmeBlogBundle:Blog/Post'), array('Blog\\Post', 'annotation', array())),
-            array(array('--entity' => 'AcmeBlogBundle:Blog/Post', '--format' => 'yml', '--fields' => 'created_by:string(255) updated_by:string(length=128 nullable=true) description:text'), array('Blog\\Post', 'yml', array(
+            array(array('--entity' => 'AcmeBlogBundle:Blog/Post', '--format' => 'yml', '--fields' => 'created_by:string(255) updated_by:string(length=128 nullable=true) description:text rating:decimal(precision=7 scale=2)'), array('Blog\\Post', 'yml', array(
                 array('fieldName' => 'created_by', 'type' => 'string', 'length' => 255),
                 array('fieldName' => 'updated_by', 'type' => 'string', 'length' => 128, 'nullable' => true),
-                array('fieldName' => 'description', 'type' => 'text', 'length' => ''),
+                array('fieldName' => 'description', 'type' => 'text'),
+                array('fieldName' => 'rating', 'type' => 'decimal', 'precision' => 7, 'scale' => 2),
             ))),
         );
     }

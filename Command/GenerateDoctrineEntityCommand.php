@@ -59,6 +59,10 @@ To deactivate the interaction mode, simply use the `--no-interaction` option
 without forgetting to pass all needed options:
 
 <info>php app/console doctrine:generate:entity --entity=AcmeBlogBundle:Blog/Post --format=annotation --fields="title:string(255) body:text" --no-interaction</info>
+
+This also has support for passing field specific attributes:
+
+<info>php app/console doctrine:generate:entity --entity=AcmeBlogBundle:Blog/Post --format=annotation --fields="title:string(length=255 nullable=true unique=true) body:text ranking:decimal(precision:10 scale:0)" --no-interaction</info>
 EOT
         );
     }
@@ -181,21 +185,29 @@ EOT
                 $type = isset($elements[1]) ? $elements[1] : 'string';
                 preg_match_all('{(.*)\((.*)\)}', $type, $matches);
                 $fieldAttributes['type'] = isset($matches[1][0]) ? $matches[1][0] : $type;
-                $fieldAttributes['length'] = null;
-                if (isset($matches[2][0]) && $fieldAttributes['length'] = $matches[2][0]) {
+                $length = null;
+                if ('string' === $fieldAttributes['type']) {
+                    $fieldAttributes['length'] = $length;
+                }
+                if (isset($matches[2][0]) && $length = $matches[2][0]) {
                     $attributesFound = [];
-                    if (false !== strpos($fieldAttributes['length'], '=')) {
-                        $attributesFound = preg_match_all('{([^,= ]+)=([^,= ]+)}', $fieldAttributes['length'], $result);
+                    if (false !== strpos($length, '=')) {
+                        $attributesFound = preg_match_all('{([^,= ]+)=([^,= ]+)}', $length, $result);
                         $attributesFound = array_combine($result[1], $result[2]);
+                    } else {
+                        $fieldAttributes['length'] = $length;
                     }
                     $fieldAttributes = array_merge($fieldAttributes, $attributesFound);
-                    if (isset($fieldAttributes['nullable'])) {
-                        $fieldAttributes['nullable'] = (bool) $fieldAttributes['nullable'];
+                    foreach (array('length', 'presicion', 'scale') as $intAttribute) {
+                        if (isset($fieldAttributes[$intAttribute])) {
+                            $fieldAttributes[$intAttribute] = (int) $fieldAttributes[$intAttribute];
+                        }
                     }
-                    if (isset($fieldAttributes['unique'])) {
-                        $fieldAttributes['unique'] = (bool) $fieldAttributes['unique'];
+                    foreach (array('nullable', 'unique') as $boolAttribute) {
+                        if (isset($fieldAttributes[$boolAttribute])) {
+                            $fieldAttributes[$boolAttribute] = (bool) $fieldAttributes[$boolAttribute];
+                        }
                     }
-                    $fieldAttributes['length'] = (int) $fieldAttributes['length'];
                 }
 
                 $fields[$name] = $fieldAttributes;
