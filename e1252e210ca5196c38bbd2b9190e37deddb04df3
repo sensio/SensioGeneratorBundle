@@ -1,0 +1,53 @@
+---------------------------------------------------------------------------
+
+by phansys at 2015-06-17T21:30:02Z
+
+I need thoughts about the format in which this definition will be received through command arguments, since I found a little hard to find a good way given the current syntax:
+```
+php app/console doctrine:generate:entity --entity=AcmeBlogBundle:Blog/Post --format=annotation --fields="title:string(255) body:text" --with-repository --no-interaction
+```
+
+---------------------------------------------------------------------------
+
+by phansys at 2015-06-30T01:27:36Z
+
+I think it could be resolved with the following (verbose) syntax:
+```bash
+--fields="title:string(length=255 nullable=true) rank:decimal(precission=10 scale=0 nullable=true)"
+```
+while keeping BC with current short syntax for ```string``` type when there is no need to supply these options:
+```bash
+--fields="title:string(255) rank:decimal(precision=10 scale=0 nullable=true)"
+```
+
+Any thoughts are welcome.
+
+---------------------------------------------------------------------------
+
+by phansys at 2015-06-30T15:27:27Z
+
+This PR is ready for review.
+
+---------------------------------------------------------------------------
+
+by fabpot at 2015-06-30T15:34:51Z
+
+Looks good, :+1:
+
+---------------------------------------------------------------------------
+
+by phansys at 2015-06-30T15:44:02Z
+
+Can I squash my commits?
+
+---------------------------------------------------------------------------
+
+by fabpot at 2015-06-30T15:47:36Z
+
+No need to squash as I can do that easily when merging.
+
+---------------------------------------------------------------------------
+
+by phansys at 2015-06-30T15:48:25Z
+
+Excellent!
