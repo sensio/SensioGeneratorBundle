@@ -52,3 +52,16 @@ Available Options
     .. code-block:: bash
 
         php app/console generate:doctrine:entity --format=annotation
+
+* ``--id-generator-strategy``: (**AUTO**) [values: AUTO, SEQUENCE, IDENTITY, UUID, TABLE or NONE] This
+  option determines the identifier generator strategy to use for the generated
+  doctrine entity. By default, the command uses the ``AUTO`` identifier generator
+  strategy:
+
+    .. code-block:: bash
+
+        php app/console generate:doctrine:entity --id-generator-strategy=AUTO
+
+.. versionadded:: 3.0
+    The ``id-generator-strategy`` option was added in version 3.0. Previously,
+    the default value was always used.

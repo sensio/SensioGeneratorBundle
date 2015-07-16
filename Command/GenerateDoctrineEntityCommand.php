@@ -36,6 +36,7 @@ class GenerateDoctrineEntityCommand extends GenerateDoctrineCommand
             ->addOption('entity', null, InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)')
             ->addOption('fields', null, InputOption::VALUE_REQUIRED, 'The fields to create with the new entity')
             ->addOption('format', null, InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)', 'annotation')
+            ->addOption('id-generator-strategy', null, InputOption::VALUE_REQUIRED, 'The identifier generation strategy (AUTO, SEQUENCE, IDENTITY, UUID, TABLE, NONE)', 'AUTO')
             ->setHelp(<<<EOT
 The <info>doctrine:generate:entity</info> task generates a new Doctrine
 entity inside a bundle:
@@ -55,14 +56,19 @@ with <comment>--format</comment>:
 
 <info>php app/console doctrine:generate:entity --entity=AcmeBlogBundle:Blog/Post --format=yml</info>
 
+By default, the command uses AUTO for the identifier generator strategy; change it
+with <comment>--id-generator-strategy</comment>:
+
+<info>php app/console doctrine:generate:entity --entity=AcmeBlogBundle:Blog/Post --id-generator-strategy=UUID</info>
+
 To deactivate the interaction mode, simply use the <comment>--no-interaction</comment> option
 without forgetting to pass all needed options:
 
-<info>php app/console doctrine:generate:entity --entity=AcmeBlogBundle:Blog/Post --format=annotation --fields="title:string(255) body:text" --no-interaction</info>
+<info>php app/console doctrine:generate:entity --entity=AcmeBlogBundle:Blog/Post --format=annotation --id-generator-strategy=AUTO --fields="title:string(255) body:text" --no-interaction</info>
 
 This also has support for passing field specific attributes:
 
-<info>php app/console doctrine:generate:entity --entity=AcmeBlogBundle:Blog/Post --format=annotation --fields="title:string(length=255 nullable=true unique=true) body:text ranking:decimal(precision:10 scale:0)" --no-interaction</info>
+<info>php app/console doctrine:generate:entity --entity=AcmeBlogBundle:Blog/Post --format=annotation --id-generator-strategy=AUTO --fields="title:string(length=255 nullable=true unique=true) body:text ranking:decimal(precision:10 scale:0)" --no-interaction</info>
 EOT
         );
     }
@@ -85,7 +91,7 @@ EOT
 
         /** @var DoctrineEntityGenerator $generator */
         $generator = $this->getGenerator();
-        $generatorResult = $generator->generate($bundle, $entity, $format, array_values($fields));
+        $generatorResult = $generator->generate($bundle, $entity, $format, array_values($fields), $input->getOption('id-generator-strategy'));
 
         $output->writeln(sprintf(
             '> Generating entity class <info>%s</info>: <comment>OK!</comment>',
@@ -165,6 +171,21 @@ EOT
         $format = $questionHelper->ask($input, $output, $question);
         $input->setOption('format', $format);
 
+        // identifier generation strategy
+        $output->writeln(array(
+            '',
+            'Determine the identifier generation strategy to use as entity id.',
+            '',
+        ));
+
+        $strategies = array('AUTO', 'SEQUENCE', 'IDENTITY', 'UUID', 'TABLE', 'NONE');
+
+        $question = new Question($questionHelper->getQuestion('Identifier generation strategy (AUTO, SEQUENCE, IDENTITY, UUID, TABLE or NONE)', $input->getOption('id-generator-strategy')), $input->getOption('id-generator-strategy'));
+        $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityIdGenerationStrategy'));
+        $question->setAutocompleterValues($strategies);
+        $idStrategy = $questionHelper->ask($input, $output, $question);
+        $input->setOption('id-generator-strategy', $idStrategy);
+
         // fields
         $input->setOption('fields', $this->addFields($input, $output, $questionHelper));
     }
@@ -223,7 +244,7 @@ EOT
         $output->writeln(array(
             '',
             'Instead of starting with a blank entity, you can add some fields now.',
-            'Note that the primary key will be added automatically (named <comment>id</comment>).',
+            sprintf('Note that the primary key will be added automatically (named <comment>id</comment>, which uses the <comment>%s</comment> generation strategy).', $input->getOption('id-generator-strategy')),
             '',
         ));
         $output->write('<info>Available types:</info> ');

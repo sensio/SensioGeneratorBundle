@@ -207,4 +207,21 @@ class Validators
             'unset',
         );
     }
+
+    /**
+     * @param string $idStrategy
+     *
+     * @return string
+     *
+     * @throws \InvalidArgumentException
+     */
+    public static function validateEntityIdGenerationStrategy($idStrategy)
+    {
+        $allowedStrategies = array('AUTO', 'SEQUENCE', 'IDENTITY', 'UUID', 'TABLE', 'NONE');
+        if (!in_array($idStrategy, $allowedStrategies)) {
+            throw new \InvalidArgumentException(sprintf('The identifier generation strategy must be one of "%s" ("%s" given)', implode('", "', $allowedStrategies), $idStrategy));
+        }
+
+        return $idStrategy;
+    }
 }

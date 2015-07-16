@@ -22,13 +22,13 @@ class GenerateDoctrineEntityCommandTest extends GenerateCommandTest
      */
     public function testInteractiveCommand($options, $input, $expected)
     {
-        list($entity, $format, $fields) = $expected;
+        list($entity, $format, $idGeneratorStrategy, $fields) = $expected;
 
         $generator = $this->getGenerator();
         $generator
             ->expects($this->once())
             ->method('generate')
-            ->with($this->getBundle(), $entity, $format, $fields)
+            ->with($this->getBundle(), $entity, $format, $fields, $idGeneratorStrategy)
             ->willReturn(new EntityGeneratorResult('', '', ''))
         ;
 
@@ -39,10 +39,10 @@ class GenerateDoctrineEntityCommandTest extends GenerateCommandTest
     public function getInteractiveCommandData()
     {
         return array(
-            array(array(), "AcmeBlogBundle:Blog/Post\n", array('Blog\\Post', 'annotation', array())),
-            array(array('--entity' => 'AcmeBlogBundle:Blog/Post'), '', array('Blog\\Post', 'annotation', array())),
-            array(array(), "AcmeBlogBundle:Blog/Post\nyml\n\n", array('Blog\\Post', 'yml', array())),
-            array(array(), "AcmeBlogBundle:Blog/Post\nyml\ncreated_by\n\n255\nfalse\nfalse\ndescription\ntext\nfalse\ntrue\nupdated_at\ndatetime\ntrue\nfalse\nrating\ndecimal\n5\n3\nfalse\nfalse\n\n", array('Blog\\Post', 'yml', array(
+            array(array(), "AcmeBlogBundle:Blog/Post\n", array('Blog\\Post', 'annotation', 'AUTO', array())),
+            array(array('--entity' => 'AcmeBlogBundle:Blog/Post'), '', array('Blog\\Post', 'annotation', 'AUTO', array())),
+            array(array(), "AcmeBlogBundle:Blog/Post\nyml\n\n", array('Blog\\Post', 'yml', 'AUTO', array())),
+            array(array(), "AcmeBlogBundle:Blog/Post\nyml\nSEQUENCE\ncreated_by\n\n255\nfalse\nfalse\ndescription\ntext\nfalse\ntrue\nupdated_at\ndatetime\ntrue\nfalse\nrating\ndecimal\n5\n3\nfalse\nfalse\n\n", array('Blog\\Post', 'yml', 'SEQUENCE', array(
                 array('fieldName' => 'createdBy', 'type' => 'string', 'length' => 255, 'columnName' => 'created_by'),
                 array('fieldName' => 'description', 'type' => 'text', 'unique' => true, 'columnName' => 'description'),
                 array('fieldName' => 'updatedAt', 'type' => 'datetimetz', 'nullable' => true, 'columnName' => 'updated_at'),

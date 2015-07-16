@@ -11,6 +11,7 @@
 
 namespace Sensio\Bundle\GeneratorBundle\Tests\Generator;
 
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Sensio\Bundle\GeneratorBundle\Generator\DoctrineEntityGenerator;
 
 class DoctrineEntityGeneratorTest extends GeneratorTest
@@ -98,7 +99,7 @@ class DoctrineEntityGeneratorTest extends GeneratorTest
 
     protected function generate($format)
     {
-        $this->getGenerator()->generate($this->getBundle(), 'Foo', $format, $this->getFields());
+        $this->getGenerator()->generate($this->getBundle(), 'Foo', $format, $this->getFields(), ClassMetadataInfo::GENERATOR_TYPE_AUTO);
     }
 
     protected function getGenerator()

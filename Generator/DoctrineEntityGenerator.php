@@ -47,8 +47,12 @@ class DoctrineEntityGenerator extends Generator
      *
      * @throws \Doctrine\ORM\Tools\Export\ExportException
      */
-    public function generate(BundleInterface $bundle, $entity, $format, array $fields)
+    public function generate(BundleInterface $bundle, $entity, $format, array $fields, $generatorType = ClassMetadataInfo::GENERATOR_TYPE_AUTO)
     {
+        $idType = 'integer';
+        if (ClassMetadataInfo::GENERATOR_TYPE_UUID === $generatorType) {
+            $idType = 'string';
+        }
         // configure the bundle (needed if the bundle does not contain any Entities yet)
         $config = $this->registry->getManager(null)->getConfiguration();
         $config->setEntityNamespaces(array_merge(
@@ -64,8 +68,10 @@ class DoctrineEntityGenerator extends Generator
 
         $class = new ClassMetadataInfo($entityClass);
         $class->customRepositoryClassName = str_replace('\\Entity\\', '\\Repository\\', $entityClass).'Repository';
-        $class->mapField(array('fieldName' => 'id', 'type' => 'integer', 'id' => true));
-        $class->setIdGeneratorType(ClassMetadataInfo::GENERATOR_TYPE_AUTO);
+        $class->mapField(array('fieldName' => 'id', 'type' => $idType, 'id' => true));
+        if (ClassMetadataInfo::GENERATOR_TYPE_NONE !== $generatorType) {
+            $class->setIdGeneratorType($generatorType);
+        }
         foreach ($fields as $field) {
             $class->mapField($field);
         }
