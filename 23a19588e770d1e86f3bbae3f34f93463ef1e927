@@ -1,0 +1,11 @@
+---------------------------------------------------------------------------
+
+by fabpot at 2013-11-12T11:17:15Z
+
+it's not a typo.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-07-16T08:32:52Z
+
+Technically it's not a typo, but I agree with @idciconsulting: this `-` should be removed because the generated templates don't include any other white space operator (we should fix everything or nothing, but not just one occurrence).
