@@ -40,14 +40,14 @@ class RoutingManipulator extends Manipulator
      * @param string $prefix
      * @param string $path
      *
-     * @return Boolean true if it worked, false otherwise
+     * @return bool true if it worked, false otherwise
      *
      * @throws \RuntimeException If bundle is already imported
      */
     public function addResource($bundle, $format, $prefix = '/', $path = 'routing')
     {
         $current = '';
-        $code = sprintf("%s:\n", Container::underscore(substr($bundle, 0, -6)).('/' !== $prefix ? '_'.str_replace('/', '_', substr($prefix, 1)) : ''));
+        $code = sprintf("%s:\n", Container::underscore(substr($bundle, 0, -6)).str_replace(array('/{_locale}', '/'), array('', '_'), stripos(strrev($prefix), '/') === 0 ? rtrim($prefix, '/') : $prefix));
         if (file_exists($this->file)) {
             $current = file_get_contents($this->file);
 
