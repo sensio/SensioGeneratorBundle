@@ -1,0 +1,19 @@
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-07-20T13:55:51Z
+
+Thanks for this commit. I like the idea behind it, but it looks like a hack. Apparently the code we are fixing is the same code that we generated (via Doctrine libraries). It's strange that we generate wrong code in the first place :confused:
+
+---------------------------------------------------------------------------
+
+by phansys at 2015-07-20T13:59:43Z
+
+Thank you for the feedback @javiereguiluz. I've created a PR last week against Doctrine in order to "fix" this into the library itself: doctrine/doctrine2#1457. I'm quoting fix because this CS rule isn't part of Doctrine's CSs:
+* https://github.com/doctrine/doctrine2/blob/master/CONTRIBUTING.md#coding-standard
+* https://github.com/doctrine/coding-standard/blob/master/Docs/README.md#doctrine-coding-standard
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-07-20T14:06:06Z
+
+:+1: then it looks like this is the only safe way to solve this issue. Thanks.
