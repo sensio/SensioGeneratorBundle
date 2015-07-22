@@ -262,6 +262,7 @@ class DoctrineCrudGenerator extends Generator
             'entity_singularized' => $this->entitySingularized,
             'route_prefix'      => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
+            'fields'            => $this->metadata->fieldMappings,
             'actions'           => $this->actions,
         ));
     }
@@ -281,6 +282,7 @@ class DoctrineCrudGenerator extends Generator
             'entity_singularized' => $this->entitySingularized,
             'fields'            => $this->metadata->fieldMappings,
             'bundle'            => $this->bundle->getName(),
+            'fields'            => $this->metadata->fieldMappings,            
             'actions'           => $this->actions,
         ));
     }
