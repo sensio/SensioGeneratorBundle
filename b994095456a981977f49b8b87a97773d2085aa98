@@ -1,0 +1,11 @@
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-07-20T13:53:17Z
+
+I've opened another PR (#395) with the same code applied using a different approach. The difference is that checking if property is a valid PHP variable name is just a conicidence. In the future we may want to restrict this validation even more. That's why I prefer to create a generic validation method which encapsulates different checks. Anyway, the result will be the same, so I'm open to merge any of the solutions proposed. Thanks!
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-07-20T14:00:57Z
+
+thank you @javiereguiluz
