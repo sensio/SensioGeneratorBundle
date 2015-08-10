@@ -127,6 +127,20 @@ class Validators
         return $entity;
     }
 
+    public static function validateEntityPropertyName($property)
+    {
+        if (in_array($property, self::getReservedWords())) {
+            throw new \InvalidArgumentException(sprintf('Name "%s" is a PHP reserved word.', $property));
+        }
+
+        // @see http://php.net/manual/en/language.variables.basics.php
+        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $property)) {
+            throw new \InvalidArgumentException(sprintf('The property name isn\'t valid (it can only contain letters, numbers and underscores; it must start with a letter)', $property));
+        }
+
+        return $property;
+    }
+
     public static function getReservedWords()
     {
         return array(

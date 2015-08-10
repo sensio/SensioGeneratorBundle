@@ -318,12 +318,7 @@ EOT
                     throw new \InvalidArgumentException(sprintf('Field "%s" is already defined.', $name));
                 }
 
-                // check reserved words
-                if ($generator->isReservedKeyword($name)) {
-                    throw new \InvalidArgumentException(sprintf('Name "%s" is a reserved word.', $name));
-                }
-
-                return $name;
+                return Validators::validateEntityPropertyName($name);
             });
 
             $columnName = $questionHelper->ask($input, $output, $question);
