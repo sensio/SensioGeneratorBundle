@@ -1,0 +1,79 @@
+---------------------------------------------------------------------------
+
+by xabbuh at 2015-07-29T07:19:18Z
+
+@javiereguiluz Which tests are you talking about?
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-07-29T07:24:14Z
+
+@xabbuh these are the failing tests:
+
+```
+There were 2 failures:
+
+1) Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandCommandTest::testInteractiveCommand with data set #0 (array(), 'FooBarBundle\napp:my-command\n', array('FooBarBundle', 'app:foo-bar'))
+Expectation failed for method name is equal to <string:generate> when invoked 1 time(s)
+Parameter 1 for invocation Sensio\Bundle\GeneratorBundle\Generator\CommandGenerator::generate(Mock_BundleInterface_80d169f2 Object (...), null) does not match expected value.
+Failed asserting that null matches expected 'app:foo-bar'.
+
+/Users/javier/sf/bundles/SensioGeneratorBundle/Command/GenerateCommandCommand.php:156
+/Users/javier/sf/bundles/SensioGeneratorBundle/vendor/symfony/console/Command/Command.php:259
+/Users/javier/sf/bundles/SensioGeneratorBundle/vendor/symfony/console/Tester/CommandTester.php:80
+/Users/javier/sf/bundles/SensioGeneratorBundle/Tests/Command/GenerateCommandCommandTest.php:39
+
+2) Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandCommandTest::testInteractiveCommand with data set #1 (array('FooBarBundle'), 'app:foo-bar\n', array('FooBarBundle', 'app:foo-bar'))
+Expectation failed for method name is equal to <string:generate> when invoked 1 time(s)
+Parameter 1 for invocation Sensio\Bundle\GeneratorBundle\Generator\CommandGenerator::generate(Mock_BundleInterface_80d169f2 Object (...), null) does not match expected value.
+Failed asserting that null matches expected 'app:foo-bar'.
+
+/Users/javier/sf/bundles/SensioGeneratorBundle/Command/GenerateCommandCommand.php:156
+/Users/javier/sf/bundles/SensioGeneratorBundle/vendor/symfony/console/Command/Command.php:259
+/Users/javier/sf/bundles/SensioGeneratorBundle/vendor/symfony/console/Tester/CommandTester.php:80
+/Users/javier/sf/bundles/SensioGeneratorBundle/Tests/Command/GenerateCommandCommandTest.php:39
+```
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-07-31T09:48:36Z
+
+All errors have been fixed. This PR is ready for review. Thanks!
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-08-10T06:56:03Z
+
+Errors reported by @xabbuh have been fixed. Any other comment about this new code before considering it finished? Thanks.
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-08-13T12:29:34Z
+
+Thanks for your work.
+
+Are you sure you want ```ContainerAwareCommand``` every time you create a command?
+
+Oskar
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-08-13T13:18:08Z
+
+@OskarStark good question! First, we don't want to define an option for this :)  So we must make a decision. This is the reasoning we followed:
+
+If we extend from `Command`, some people will have problems if they try to use `$this->container->...` as showed in Symfony docs and blogs. However, if we extend from `ContainerAwareCommand`, all developers will be happy: if you try to use the container, everything will work. If you don't use the container, this doesn't make your command fail.
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-08-13T13:43:30Z
+
+thats exactly what i thought, and i absolutely agree with you!
+
+i just wanted to hint you to that! :)
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2015-08-17T21:27:17Z
+
+I agree that extending the `ContainerAwareCommand` class is the better solution. Most of the times you will probably need to access some services in your command and when you register the command itself as a service, you will probably not use the generator at all for this task.
