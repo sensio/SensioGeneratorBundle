@@ -136,6 +136,15 @@ class BundleGeneratorTest extends GeneratorTest
         $this->getGenerator()->generateBundle($bundle);
     }
 
+    public function testDependencyInjectionExtension()
+    {
+        $bundle = new Bundle('Foo\BarBundle', 'FooBarBundle', $this->tmpDir, 'yml', true);
+        $this->getGenerator()->generateBundle($bundle);
+
+        $content = file_get_contents($this->tmpDir.'/Foo/BarBundle/DependencyInjection/FooBarExtension.php');
+        $this->assertContains('$container->addResource(new FileResource(__DIR__.\'/Configuration.php\'))', $content);
+    }
+
     protected function getGenerator()
     {
         $generator = new BundleGenerator($this->filesystem);
