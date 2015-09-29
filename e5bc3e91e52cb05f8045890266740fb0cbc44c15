@@ -1,0 +1,236 @@
+---------------------------------------------------------------------------
+
+by fabpot at 2015-07-16T00:24:32Z
+
+Great work @maidmaid!
+
+@javiereguiluz @weaverryan Can you review these changes?
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-07-16T08:27:59Z
+
+:+1: vey nice job @maidmaid! Controllers and config files look OK to me. I only have minor comments about the generated templates:
+
+In https://github.com/maidmaid/sf-crud/blob/master/app/Resources/views/article/index.html.twig
+
+1) `{% extends '::base.html.twig' %}` should be `{% extends 'base.html.twig' %}`
+
+2) The closing `{% endblock %}` of the `body` block should not be indented.
+
+-----
+
+In addition to the above points, in `edit`, `new` and `show` templates, the entire `<ul class="record_actions">` contents are wrongly indented.
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-07-16T17:28:11Z
+
+Wow, great work @maidmaid - these controllers look great when I tried them.
+
+I added 1 comment, and I have a few other suggestions (that are really feature-creep):
+
+A) In the command, we ask about the format. This is purely for routing, correct? If so, we should re-phrase the question to be more clear that they are choosing the routing format.
+
+B) As we're creating files, I'd love to print out those details so the user knows what files were created. We do this, for example, in the `generate:bundle` command: https://github.com/sensiolabs/SensioGeneratorBundle/blob/master/Command/GenerateBundleCommand.php#L310  and https://github.com/sensiolabs/SensioGeneratorBundle/blob/master/Command/GenerateBundleCommand.php#L280
+
+This is *really* great - I'm excited to have this guy merged in. This has been on my mind for awhile - the code that was generated before was ugly at the very least :).
+
+Thanks!
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-07-16T20:55:03Z
+
+Regarding the proposal B), there is a separate issue (#9) which asks to report any added/modified/removed file when adding the `-v` flag to any generator command. So there is no need to take care of that in this pull request.
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-07-18T17:45:20Z
+
+great work :+1:
+
+---------------------------------------------------------------------------
+
+by maidmaid at 2015-07-21T15:42:27Z
+
+Happy that you like these changes ! I applied your feedback and updated my repo containing generated result, can you review this ? I'am not sure about fixing indents.
+
+I have some suggestions :
+- Why not generate [smoke tests ?](http://symfony.com/doc/current/best_practices/tests.html#functional-tests)
+- Why not use [i18n for translation expression (as Create label, Edit label, ...) ?](http://symfony.com/doc/current/best_practices/i18n.html)
+- Why not use [security to protect actions with write ?](http://symfony.com/doc/current/best_practices/security.html#the-security-annotation)
+- ``crud/views/others/actions.html.twig.twig`` is only used by ``index.html.twig.twig`` [here](https://github.com/sensiolabs/SensioGeneratorBundle/blob/master/Resources/skeleton/crud/views/index.html.twig.twig#L51). Why not delete it and use directly twig code in ``index.html.twig.twig`` for greater clarity ?
+- With the goal to have templates as neutral as possible, why not remove ``records_list``,  ``record_actions`` and ``record_properties`` css classes ?
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-07-21T16:22:03Z
+
+@4) :+1:
+@5) :+1:
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-07-21T19:55:17Z
+
+@maidmaid I like 4 & 5 also. About 1-3, they're a bit more controversial, so let's merge this and open up future PR's about those.
+
+But yes, I would like 4 * 5 for this PR :)
+
+---------------------------------------------------------------------------
+
+by fabpot at 2015-07-22T03:13:44Z
+
+4 and 5 would be nice in this PR.
+1, 2, and 3 probably do not fit into what we are trying to do with this bundle.
+
+---------------------------------------------------------------------------
+
+by maidmaid at 2015-07-23T16:15:02Z
+
+Changes ready for reviewing ;)
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-07-25T16:46:02Z
+
+I just tried this, :+1: from me in its current state. A few minor things which would be nice to address:
+
+1) There are still some extra `-%}` closing twig tags (with the `-` for removing whitespace) - these are just unnecessary
+
+2) I had you remove the `\d+` from the annotation routing, arguing that ids ca be guid's. But, I didn't remember that they also need to be removed from all of the other routing formats.
+
+3) If you use non-annotation routing (e.g. yml), then things will only work if you already have an import in `app/config/routing.yml` to `@YourBundle/Resources/config/routing.yml`. We could do nothing here, or we could add the import to `app/config/routing.yml` if we detect that the the `routing.yml` file in the bundle was created as part of the generation process (if there was already a file there, we can safely assume they have it imported already).
+
+---------------------------------------------------------------------------
+
+by maidmaid at 2015-07-29T18:19:53Z
+
+Can you review changes ?
+
+@weaverryan for 3, that's when it's ok :
+![image](https://cloud.githubusercontent.com/assets/4578773/8965393/7bac01a2-362b-11e5-9f0e-a37f3bfd6a4f.png)
+And when it's failed :
+![image](https://cloud.githubusercontent.com/assets/4578773/8965411/a44b5b12-362b-11e5-8754-a79c3dd33c76.png)
+I see that [GenerateBundleCommand::updateRouting](https://github.com/sensiolabs/SensioGeneratorBundle/blob/v2.5.3/Command/GenerateBundleCommand.php#L341) has a similar code for add main routing. Is it good refactore this by adding method named ``updateRouting`` in ``GeneratorCommand`` super class and that will be used by ``GenerateBundleCommand`` and ``GenerateDoctrineCrudCommand`` ?
+
+---------------------------------------------------------------------------
+
+by maidmaid at 2015-07-30T14:12:10Z
+
+Oups, I closed PR accidentally, sorry.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-08-11T12:37:11Z
+
+@maidmaid thanks a lot for working on this and for your patience during the review process. In order to prepare everything for the final merge, we need two things:
+
+1) Fix [these syntax issues](http://fabbot.io/report/sensiolabs/SensioGeneratorBundle/377/b266f401d4ac259ec39900827ed1976c3f27e88a) reported by "fabot". You should just execute the following command:
+
+```bash
+$ curl http://fabbot.io/patch/sensiolabs/SensioGeneratorBundle/377/b266f401d4ac259ec39900827ed1976c3f27e88a/cs.diff | patch -p0
+```
+
+2) Rebase the PR contents.
+
+Thanks!
+
+---------------------------------------------------------------------------
+
+by JHGitty at 2015-08-19T01:27:42Z
+
+ping @maidmaid
+please fix it - I want to use your code :+1:
+
+---------------------------------------------------------------------------
+
+by maidmaid at 2015-08-19T22:38:12Z
+
+(Sorry @JHGitty, I was busy with netflix :grin:)
+@javiereguiluz, rebase is very not easy, there are a lot of conflicts... For example, I see that 3rd proposition of @weaverryan in [this comment](https://github.com/sensiolabs/SensioGeneratorBundle/pull/377#issuecomment-124860772) is already commited [here](https://github.com/sensiolabs/SensioGeneratorBundle/commit/ed8ab3c261d879283f4bbb37998d176a6352bfcc) and it is in conflict with my [commit] (https://github.com/maidmaid/SensioGeneratorBundle/commit/b266f401d4ac259ec39900827ed1976c3f27e88a). I'm confused, can you help me?
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-08-20T06:53:04Z
+
+@maidmaid of course I'm willing to help you ... but I don't know how :confused: I can make this rebasing if you want, but then I'd have to create a new PR (reusing your original commits so you get full credit of your work).
+
+---------------------------------------------------------------------------
+
+by ReservedDeveloper at 2015-08-28T16:14:30Z
+
+![Excited](https://media1.giphy.com/media/f31DK1KpGsyMU/giphy.gif "Excited")
+
+...but seriously, thanks for all your hard work @maidmaid. I cringed when I saw the markup generated by the CRUD command last time around. I started working on some templates myself, but hadn't got back around to it. Revisit today, and find your work. Eager to see this make it in!
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-08-28T18:28:45Z
+
+@maidmaid can you make fabbot happy please? :smile:
+
+---------------------------------------------------------------------------
+
+by JHGitty at 2015-09-11T11:19:21Z
+
+ping @maidmaid
+
+---------------------------------------------------------------------------
+
+by maidmaid at 2015-09-13T11:42:30Z
+
+Sorry for the wait... I will retry the rebase...
+
+fabbot says that there is YAML syntax error in ``Resources/skeleton/crud/config/routing.yml.twig`` that is twig file, it's normal ?
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-09-13T11:43:33Z
+
+@maidmaid yes, you can forget about that error. Good luck with the rebase :)
+
+---------------------------------------------------------------------------
+
+by maidmaid at 2015-09-13T15:14:59Z
+
+@javiereguiluz the rebase is ok :sweat_smile: Can you review this ?
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-09-20T08:17:10Z
+
+ping @javiereguiluz would like to get this code as soon as possible :)
+
+thanks again for this huge work @maidmaid
+
+---------------------------------------------------------------------------
+
+by JHGitty at 2015-09-21T17:06:40Z
+
+Same here, hope for a fast merge :)
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-09-23T01:11:51Z
+
+I just tested this out again, and it still works really great.
+
+The only issue I saw was still item (3) from this comment: https://github.com/sensiolabs/SensioGeneratorBundle/pull/377#issuecomment-124860772. You can repeat by cloning the symfony-demo and then generating with yaml routes.
+
+And if something fails to be created (e.g. the form can't be created because on already exists), the generator just stops, potentially part-way done. But that's the existing behavior, so we should deal with it elsewhere.
+
+:+1: after the yaml routing issue is taken care of.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-09-29T13:37:38Z
+
+@weaverryan I'm going to merge it as it is and then I'll work on the issue you mentioned. If I cannot solve it, I'll output at least a message explaining that the file must be imported manually.
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-09-29T13:38:49Z
+
+@javiereguiluz :+1: the nature of generators is that we can't handle every case, and we can't perfect PR's forever :)
