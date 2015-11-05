@@ -31,10 +31,10 @@ class DoctrineFormGeneratorTest extends GeneratorTest
         $this->assertContains("'data_class' => 'Foo\BarBundle\Entity\Post'", $content);
 
         if (Kernel::MAJOR_VERSION == 2 && Kernel::MINOR_VERSION < 8) {
-            $this->assertContains("getName", $content);
+            $this->assertContains('getName', $content);
             $this->assertContains("'foo_barbundle_post'", $content);
         } else {
-            $this->assertNotContains("getName", $content);
+            $this->assertNotContains('getName', $content);
             $this->assertNotContains("'foo_barbundle_post'", $content);
         }
     }
