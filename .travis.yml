@@ -1,5 +1,7 @@
 language: php
 
+php: [5.3.3, 5.3, 5.4, 5.5, 5.6, 7.0, hhvm]
+
 sudo: false
 
 before_install:
@@ -10,11 +12,12 @@ install:
 
 matrix:
     include:
-        - php: 5.3.3
-        - php: 5.3
-        - php: 5.4
-        - php: 5.5
         - php: 5.6
-        - php: 7.0
-        - php: hhvm
+          env: DEPENDENCIES='dev' SYMFONY_VERSION="2.8.*@dev"
+        - php: 5.6
+          env: DEPENDENCIES='dev' SYMFONY_VERSION="3.0.*@dev"
     fast_finish: true
+
+before_script:
+    - if [ "$DEPENDENCIES" = "dev" ]; then perl -pi -e 's/^}$/,"minimum-stability":"dev"}/' composer.json; fi;
+    - if [ "$SYMFONY_VERSION" != "" ]; then composer require --no-update "symfony/symfony:${SYMFONY_VERSION}"; fi;
