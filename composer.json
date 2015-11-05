@@ -25,7 +25,6 @@
         "psr-0": { "Sensio\\Bundle\\GeneratorBundle": "" }
     },
     "target-dir": "Sensio/Bundle/GeneratorBundle",
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
             "dev-master": "3.0.x-dev"
