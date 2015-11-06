@@ -12,7 +12,6 @@
 namespace Sensio\Bundle\GeneratorBundle\Tests\Generator;
 
 use Sensio\Bundle\GeneratorBundle\Generator\DoctrineFormGenerator;
-use Symfony\Component\HttpKernel\Kernel;
 
 class DoctrineFormGeneratorTest extends GeneratorTest
 {
@@ -30,7 +29,7 @@ class DoctrineFormGeneratorTest extends GeneratorTest
         $this->assertContains('class PostType extends AbstractType', $content);
         $this->assertContains("'data_class' => 'Foo\BarBundle\Entity\Post'", $content);
 
-        if (Kernel::MAJOR_VERSION == 2 && Kernel::MINOR_VERSION < 8) {
+        if (!method_exists('Symfony\Component\Form\AbstractType', 'getBlockPrefix')) {
             $this->assertContains('getName', $content);
             $this->assertContains("'foo_barbundle_post'", $content);
         } else {
