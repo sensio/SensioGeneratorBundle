@@ -1,7 +1,5 @@
 language: php
 
-php: [5.3.3, 5.3, 5.4, 5.5, 5.6, 7.0, hhvm]
-
 sudo: false
 
 before_install:
@@ -12,6 +10,13 @@ install:
 
 matrix:
     include:
+        - php: 5.3.3
+        - php: 5.3
+        - php: 5.4
+        - php: 5.5
+        - php: 5.6
+        - php: 7.0
+        - php: hhvm
         - php: 5.6
           env: DEPENDENCIES='dev' SYMFONY_VERSION="2.8.*@dev"
         - php: 5.6
