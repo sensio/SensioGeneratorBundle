@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-09-29T21:17:02Z
+
+@javiereguiluz it feels like we need a battery of functional tests for this bundle to make sure the edge-cases are taken care of in a decent way. There's a lot of manual testing currently.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-09-30T09:25:22Z
+
+@weaverryan I agree completely. And we'd also need to refactor the entire bundle because most of its code is more complex than it should be.
+
+---------------------------------------------------------------------------
+
+by fabpot at 2015-11-10T12:57:26Z
+
+What's the status of this PR?
