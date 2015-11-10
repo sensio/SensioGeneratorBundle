@@ -1,0 +1,35 @@
+---------------------------------------------------------------------------
+
+by spinx at 2015-11-08T00:52:16Z
+
+The build is failing on PHP 5.3 which is a non-issue, right ?
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2015-11-09T10:27:01Z
+
+You need to skip the short array syntax tests on PHP 5.3.
+
+---------------------------------------------------------------------------
+
+by spinx at 2015-11-09T10:36:22Z
+
+@xabbuh Yeah, I realised I could do that. I need to setup PHP 5.3 somewhere to test the fix that I did.
+
+BUT since this is in master, I was assuming PHP 5.3 support is no longer needed. My first contribution to SF2 ecosystem so please bear with me - where are the supported php versions specified ?
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-11-09T10:40:05Z
+
+@spinx thanks for your first contribution!  There is no need for you to setup a 5.3 environment. We use Travis to test code in different setups (https://travis-ci.org/sensiolabs/SensioGeneratorBundle/builds/89845420) This is precisely the error mentioned by @xabbuh that happened in 5.3 version: https://travis-ci.org/sensiolabs/SensioGeneratorBundle/jobs/89845422
+
+You just need to check if PHP version is less than 5.4.0 and in that case, mark the test as skipped. Thanks.
+
+---------------------------------------------------------------------------
+
+by spinx at 2015-11-09T10:54:59Z
+
+@javiereguiluz Tests pass, squashed commits.
+
+I don't pass stubs if less than PHP 5.3 since these tests are doing some magic and I don't see how could I skip them in a way that would be acceptable.
