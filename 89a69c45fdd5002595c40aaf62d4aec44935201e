@@ -1,0 +1,27 @@
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-11-19T08:47:09Z
+
+:+1: for your contribution
+
+can you please check why travis failed?
+
+Thank you
+
+---------------------------------------------------------------------------
+
+by jaytaph at 2015-11-19T10:19:56Z
+
+@OskarStark I've taken a look, and it seems to be an issue with the PHP finder, not with this code.. I'll try and pinpoint how and why (it seems that finding PHP binaries has changed, so it will include an additional space after the binary name..  running the process would use the arguments like: `'/usr/bin/php<space>', '-l', '...'`..  meaning that the binary cannot be found.
+
+---------------------------------------------------------------------------
+
+by jaytaph at 2015-11-19T14:40:29Z
+
+The process issue has been fixed in symfony 2.3, just waiting for the merge towards 2.7, 2.8 and master. Until then, I reckon each PR will fail until then.
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-11-19T14:42:59Z
+
+:+1: @jaytaph
