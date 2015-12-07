@@ -13,14 +13,14 @@ structure:
 
 .. code-block:: bash
 
-    $ php app/console generate:bundle
+    $ php bin/console generate:bundle
 
 To deactivate the interactive mode, use the `--no-interaction` option but don't
 forget to pass all needed options:
 
 .. code-block:: bash
 
-    $ php app/console generate:bundle --namespace=Acme/Bundle/BlogBundle --no-interaction
+    $ php bin/console generate:bundle --namespace=Acme/Bundle/BlogBundle --no-interaction
 
 Available Options
 -----------------
@@ -39,7 +39,7 @@ Available Options
 
     .. code-block:: bash
 
-        $ php app/console generate:bundle --namespace=Acme/Bundle/BlogBundle
+        $ php bin/console generate:bundle --namespace=Acme/Bundle/BlogBundle
 
 ``--bundle-name``
     The optional bundle name. It must be a string ending with the ``Bundle``
@@ -47,7 +47,7 @@ Available Options
 
     .. code-block:: bash
 
-        $ php app/console generate:bundle --bundle-name=AcmeBlogBundle
+        $ php bin/console generate:bundle --bundle-name=AcmeBlogBundle
 
 ``--dir``
     The directory in which to store the bundle. By convention, the command
@@ -55,7 +55,7 @@ Available Options
 
     .. code-block:: bash
 
-        $ php app/console generate:bundle --dir=/var/www/myproject/src
+        $ php bin/console generate:bundle --dir=/var/www/myproject/src
 
 ``--format``
     **allowed values**: ``annotation|php|yml|xml`` **default**: ``annotation``
@@ -67,6 +67,6 @@ Available Options
 
     .. code-block:: bash
 
-        $ php app/console generate:bundle --format=annotation
+        $ php bin/console generate:bundle --format=annotation
 
 .. _`SensioFrameworkExtraBundle`: http://symfony.com/doc/master/bundles/SensioFrameworkExtraBundle/index.html
