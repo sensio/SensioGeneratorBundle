@@ -1,0 +1,31 @@
+---------------------------------------------------------------------------
+
+by fabpot at 2015-12-08T18:09:24Z
+
+Needs to be rebased
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-12-09T16:52:15Z
+
+@AdrienLucas the title and description of your pull request looks confusing:
+
+```
+showPage.html.twig  is camelCase
+show_page.html.twig is snake_case
+```
+
+Best Practices recommend snake_case for everything related to Twig (templates, variables, filters, functions, etc.)
+
+---------------------------------------------------------------------------
+
+by AdrienLucas at 2015-12-12T13:12:03Z
+
+@fabpot it is now rebased.
+@javiereguiluz thank you, I fixed the mistakes.
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-12-13T21:08:46Z
+
+:+1:
