@@ -1,0 +1,30 @@
+---------------------------------------------------------------------------
+
+by khalid-s at 2015-12-11T19:22:46Z
+
+hi, just gave a try for this solution, and works great.
+
+But when generating a crud for a bundle living in a vendor name, there is a \ missing between the vendor name and the bundle name for new and edit action. not sure that am clear. e.g
+
+For a bundle CompanyBundle in the folder  /src/IKNSA/CompanyBundle/Controller/CompanyController.php
+
+```
+public function newAction(Request $request)
+    {
+        $company = new Company();
+        $form = $this->createForm('\IKNSACompanyBundle\Form\CompanyType', $company);
+        $form->handleRequest($request);
+```
+There is a backslash missing between IKNSA and CompanyBundle
+
+---------------------------------------------------------------------------
+
+by jpyzio at 2015-12-18T21:13:38Z
+
+It should work fine.
+
+---------------------------------------------------------------------------
+
+by khalid-s at 2015-12-19T11:50:41Z
+
+Tested again and it works fine
