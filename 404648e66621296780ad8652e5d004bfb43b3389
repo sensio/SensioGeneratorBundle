@@ -1,0 +1,29 @@
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-12-21T05:52:03Z
+
+Could you please add a test for this change?
+
+---------------------------------------------------------------------------
+
+by intermike at 2015-12-24T22:00:04Z
+
+I am not sure I did it properly and fully. Please check. Thanks.
+
+---------------------------------------------------------------------------
+
+by intermike at 2015-12-24T22:03:42Z
+
+Btw, I did this new test without primal change and phpunit has been just stuck without any error messages. Is that normal behaviour?
+
+![clipboard01](https://cloud.githubusercontent.com/assets/10540148/11998171/e5b56aaa-aa9a-11e5-849d-d15783728ea2.jpg)
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-12-28T09:03:56Z
+
+@intermike after applying your change tests work for me (and for Travis CI service too):
+
+![phpunit_tests](https://cloud.githubusercontent.com/assets/73419/12016367/32d3e26a-ad4a-11e5-92e1-fa2003d73a31.png)
+
+So I'm going to merge this change. Thanks for your contribution.
