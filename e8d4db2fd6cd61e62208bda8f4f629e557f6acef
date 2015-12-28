@@ -1,0 +1,67 @@
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-11-29T06:40:07Z
+
+:+1:
+
+---------------------------------------------------------------------------
+
+by JHGitty at 2015-12-02T10:11:34Z
+
+Please merge this! :+1:
+
+---------------------------------------------------------------------------
+
+by cezar77 at 2015-12-07T12:16:29Z
+
+I ran across the same problem last week. Today I posted an issue:
+
+https://github.com/sensiolabs/SensioGeneratorBundle/issues/443
+
+and then found this bug fixing. It should also be mentioned that the problems arise not only with manyToOne, but also with manyToMany relations, which is obvious, since those fields don't exist in the array `fields_mapping`.
+
+Hopefully this will be soon merged.
+
+---------------------------------------------------------------------------
+
+by JHGitty at 2015-12-07T12:25:11Z
+
+ping @fabpot @javiereguiluz
+
+---------------------------------------------------------------------------
+
+by afurculita at 2015-12-14T18:37:04Z
+
+:+1:
+
+---------------------------------------------------------------------------
+
+by dgoujard at 2015-12-22T19:37:26Z
+
+:+1:
+
+---------------------------------------------------------------------------
+
+by rtuin at 2015-12-24T15:13:36Z
+
+Thanks for this fix. Just confirmed it's working on Symfony3.0.0
+
+---------------------------------------------------------------------------
+
+by kissifrot at 2015-12-27T19:34:36Z
+
+:+1:
+Confirmed on Symfony 3.0.1, please merge ;)
+
+---------------------------------------------------------------------------
+
+by Maff- at 2015-12-28T08:24:30Z
+
+Too bad this didn't make it in one of the three bug-fix releases.
+
+For those not in the know, you can place the contents of the changed template in `app/Resources/SensioGeneratorBundle/skeleton/form/FormType.php.twig` and mitigate this problem for now.
+
+One problem I see is that the generated code still uses the string format as type parameter, (instead of
+Type::class format). Besides I'm not even sure if we need this code, I would assume the `DoctrineOrmTypeGuesser` does already distinguish between `date`, `time` and `datetime`.
+
+Some feedback from one of the maintainers would be greatly appreciated!
