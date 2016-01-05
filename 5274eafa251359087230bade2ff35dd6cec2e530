@@ -1,0 +1,11 @@
+---------------------------------------------------------------------------
+
+by xabbuh at 2016-01-01T21:14:55Z
+
+I think we should simply always removed single quotes instead of double quotes (in double quotes you need to be careful to not use escape sequences, for example).
+
+---------------------------------------------------------------------------
+
+by gabiudrescu at 2016-01-02T19:35:48Z
+
+@xabbuh not a bad idea. I kinda followed the example in place right now, but if you or anyone else finds this a good idea, it can be modified.
