@@ -3,7 +3,7 @@ Generating a New Form Type Class Based on a Doctrine Entity
 
 .. caution::
 
-    If your application is based on Symfony 3, replace ``php app/console`` by
+    If your application is based on Symfony 3, replace ``php bin/console`` by
     ``php bin/console`` before executing any of the console commands included
     in this article.
 
@@ -15,7 +15,7 @@ by using the metadata mapping of a given entity class:
 
 .. code-block:: bash
 
-    $ php app/console generate:doctrine:form AcmeBlogBundle:Post
+    $ php bin/console generate:doctrine:form AcmeBlogBundle:Post
 
 Required Arguments
 ------------------
@@ -28,4 +28,4 @@ Required Arguments
 
     .. code-block:: bash
 
-        $ php app/console generate:doctrine:form AcmeBlogBundle:Post
+        $ php bin/console generate:doctrine:form AcmeBlogBundle:Post
