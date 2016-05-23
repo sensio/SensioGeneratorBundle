@@ -23,9 +23,9 @@ class DoctrineFormGeneratorTest extends GeneratorTest
 
         $content = file_get_contents($this->tmpDir.'/Form/PostType.php');
         $this->assertContains('->add(\'title\')', $content);
-        $this->assertContains('->add(\'createdAt\', \'date\')', $content);
-        $this->assertContains('->add(\'publishedAt\', \'time\')', $content);
-        $this->assertContains('->add(\'updatedAt\', \'datetime\')', $content);
+        $this->assertContains('->add(\'createdAt\', \'Symfony\Component\Form\Extension\Core\Type\DateType\')', $content);
+        $this->assertContains('->add(\'publishedAt\', \'Symfony\Component\Form\Extension\Core\Type\TimeType\')', $content);
+        $this->assertContains('->add(\'updatedAt\', \'Symfony\Component\Form\Extension\Core\Type\DateTimeType\')', $content);
         $this->assertContains('class PostType extends AbstractType', $content);
         $this->assertContains("'data_class' => 'Foo\BarBundle\Entity\Post'", $content);
 
