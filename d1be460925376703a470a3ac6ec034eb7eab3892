@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+
+by Pierstoval at 2016-05-22T17:47:32Z
+
+This `getcwd` is quite strange at first, but it works, thanks for the feature :+1: can't wait for it to be implemented :)
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2016-06-18T00:43:26Z
+
+Updated! This should be good to go now
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2016-06-18T14:20:46Z
+
+@xabbuh I just solved it in a different way that required less changes :)
