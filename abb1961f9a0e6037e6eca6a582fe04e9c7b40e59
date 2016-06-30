@@ -1,0 +1,41 @@
+---------------------------------------------------------------------------
+
+by xabbuh at 2016-06-13T13:35:53Z
+
+As you can see in the Travis build this fails on older PHPUnit versions. If you want to avoid the deprecated `getMock()` method here, I suggest to use `getMockBuilder()` instead which is available on those versions too.
+
+---------------------------------------------------------------------------
+
+by hairmare at 2016-06-13T13:37:10Z
+
+Thanks @xabbuh I just noticed myself and will update the PR so it still works with older phpunit versions.
+
+---------------------------------------------------------------------------
+
+by hairmare at 2016-06-13T14:30:48Z
+
+I updated this PR so it works with PHPUnit <5 as well as PHPUnit >= 5.4.
+
+---------------------------------------------------------------------------
+
+by narcoticfresh at 2016-06-29T09:31:55Z
+
+@xabbuh can this be merged?
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2016-06-29T19:04:36Z
+
+@narcoticfresh Sorry, I am not a maintainer of this bundle. But the changes so far look good to me.
+
+---------------------------------------------------------------------------
+
+by fabpot at 2016-06-30T07:34:43Z
+
+@hairmare Looks good to me as well. Small nitpicking: can you move the whole expression on one line for each call?
+
+---------------------------------------------------------------------------
+
+by hairmare at 2016-06-30T08:33:10Z
+
+@fabpot I addressed the formatting changes and rebased the pull request. Thanks
