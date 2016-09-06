@@ -27,8 +27,13 @@ class {{ form_class }} extends AbstractType
 
         {%- for field in fields -%}
             {%- if fields_mapping[field] is defined and fields_mapping[field]['type'] in ['date', 'time', 'datetime'] %}
+                {%- if fields_mapping[field]['type'] == 'datetime' %}
+                    {%- set fieldType = 'DateTime' %}
+                {%- else %}
+                    {%- set fieldType = fields_mapping[field]['type']|capitalize %}
+                {%- endif %}
 
-            ->add('{{ field }}', '{{ fields_mapping[field]['type'] }}')
+            ->add('{{ field }}', 'Symfony\Component\Form\Extension\Core\Type\{{ fieldType }}Type')
 
             {%- else %}
 
