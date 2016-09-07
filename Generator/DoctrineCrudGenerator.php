@@ -70,8 +70,8 @@ class DoctrineCrudGenerator extends Generator
         }
 
         $this->entity = $entity;
-        $this->entitySingularized = lcfirst(Inflector::singularize($entity));
-        $this->entityPluralized = lcfirst(Inflector::pluralize($entity));
+        $this->entitySingularized = str_replace('\\', '', lcfirst(Inflector::singularize($entity)));
+        $this->entityPluralized = str_replace('\\', '', lcfirst(Inflector::pluralize($entity)));
         $this->bundle = $bundle;
         $this->metadata = $metadata;
         $this->setFormat($format);
