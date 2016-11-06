@@ -1,0 +1,129 @@
+---------------------------------------------------------------------------
+
+by hhamon at 2015-07-21T13:57:23Z
+
+I don't know if it makes sense or not but I would display the list of files when the command is run with a verbose option.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-07-21T13:59:00Z
+
+@hhamon it makes sense of course ... but for others don't: Ryan seems to disagree with this: https://github.com/sensiolabs/SensioGeneratorBundle/issues/9#issuecomment-122902901
+
+---------------------------------------------------------------------------
+
+by hhamon at 2015-07-21T14:14:03Z
+
+Thanks! This is what I was thinking about. For a newcomer I agree showing the list of files that have been created or changed is better.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-07-22T15:15:12Z
+
+I've just updated this PR. The main change is that the labels are now `created`, `updated`, `deleted`, which are much more easy to understand. An example of the `generate:bundle` output:
+
+![generate_bundle_command](https://cloud.githubusercontent.com/assets/73419/8828958/fc6afb96-3094-11e5-8d49-831220e746b0.png)
+
+The proof-of-concept is now finished and it's time to make a decision: should we implement this idea for the rest of commands? Any changes that you want to suggest for the implementation? Thanks!
+
+---------------------------------------------------------------------------
+
+by fabpot at 2015-07-22T15:24:02Z
+
+I'm a bit worried about the verbosity of the command. People don't read so many lines of output. Do you what is the max number of files that could be displayed by a command?
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-07-22T15:37:35Z
+
+The longest output would be to generate a shared bundle:
+
+![generate_shared_bundle](https://cloud.githubusercontent.com/assets/73419/8829670/2c6cdcb2-3098-11e5-9196-7fe620fad277.png)
+
+`generate:crud`, `generate:doctrine:entity`, `generate:doctrine:form`, etc. result in short outputs.
+
+---------------------------------------------------------------------------
+
+by fabpot at 2015-07-22T15:44:06Z
+
+For a bundle generation, can't we just say that we generated output in the `src/Acme/BlogBundle/` directory? We don't really care about the individual files here as we generated the whole directory content.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2015-08-19T09:36:53Z
+
+We need to make a decision about this change. There are 3 options:
+
+1. Report ALL changes, as requested originally in #9 and as done by Rails, npm, etc.
+2. Report MOST changes (as Fabien proposed, let's hide some changes when the list is long, like when creating a bundle)
+3. Report NOTHING, like we do currently and close this pull request.
+
+Let's ping some friends to help us decide: @weaverryan @WouterJ @xabbuh @stof @hhamon @phansys @OskarStark
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-08-19T09:41:07Z
+
+:+1:  for **Option 2** if we just chose one option
+
+what about?
+```default``` -> **Option 1**, so leave as it is
+```-vv``` -> **Option 2**
+```-vvv```-> **Option 3**
+
+---------------------------------------------------------------------------
+
+by stof at 2015-08-19T09:54:48Z
+
+showing this only for verbose output makes sense
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2015-08-19T19:08:26Z
+
+My vote is for Option 1. Option 2 is also ok, but it seems like it might be a bit extra work, and I'm not convinced it's better. We generally don't create a lot of files (your screenshot is probably of our biggest operation), so I don't think it's overwhelming: it's informational!
+
+---------------------------------------------------------------------------
+
+by wouterj at 2015-08-19T20:14:23Z
+
+I would either show the directory that's created without the files inside it (option 2) or the files that are created and not the directories. Showing both seem redundant to me (less output is better imo, especially for Windows users who have a very small cmd window by default).
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2015-08-19T20:23:28Z
+
+I'm for option one too. Displaying messages depending on the output verbosity as proposed by @OskarStark even is a good idea, but probably is not worth the additional workload.
+
+---------------------------------------------------------------------------
+
+by fabpot at 2015-11-10T12:58:45Z
+
+Can you rebase? Is it mergeable?
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2015-11-19T08:47:54Z
+
+@javiereguiluz can you please rebase this PR?
+
+Thank you :+1:
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2016-01-05T15:54:56Z
+
+ping @javiereguiluz
+
+---------------------------------------------------------------------------
+
+by fabpot at 2016-02-26T04:37:28Z
+
+@javiereguiluz What's the status of this PR?
+
+---------------------------------------------------------------------------
+
+by phansys at 2016-05-17T04:13:45Z
+
+@javiereguiluz, thank you so much for the call and sorry for the delay.
+I agree with the solution of showing these messages based on the command's verbosity. Regarding the @weaverryan's [comment at #9](https://github.com/sensiolabs/SensioGeneratorBundle/issues/9#issuecomment-122902901) I think instead of polluting the default output with this kind of information, we should encourage beginners to execute the whole app (console commands too) in debug / verbose mode until they feel comfortable and familiar with the behavior. So, that way we are taking into account both scenarios while leveraging the current implementation for these kind of requirements.
