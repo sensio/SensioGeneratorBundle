@@ -1,0 +1,21 @@
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2016-11-07T15:33:26Z
+
+👍
+
+Status: reviewed.
+
+@HeahDude thanks for fixing this ... and I'm sorry for having introduced it :(
+
+---------------------------------------------------------------------------
+
+by HeahDude at 2016-11-07T19:34:44Z
+
+@fabpot tests are failing when I address @xabbuh's comment
+
+---------------------------------------------------------------------------
+
+by HeahDude at 2016-11-07T19:46:03Z
+
+Thanks @fabpot we're good to go now :)
