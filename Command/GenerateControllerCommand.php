@@ -90,7 +90,8 @@ EOT
             $bundle = Validators::validateBundleName($bundle);
 
             try {
-                $bundle = $this->getContainer()->get('kernel')->getBundle($bundle);
+                $bundleMap = $this->getContainer()->get('kernel')->getBundle($bundle, false);
+                $bundle = end($bundleMap);
             } catch (\Exception $e) {
                 $output->writeln(sprintf('<bg=red>Bundle "%s" does not exist.</>', $bundle));
             }
@@ -132,7 +133,8 @@ EOT
             list($bundle, $controller) = $this->parseShortcutNotation($controller);
 
             try {
-                $b = $this->getContainer()->get('kernel')->getBundle($bundle);
+                $bundleMap = $this->getContainer()->get('kernel')->getBundle($bundle, false);
+                $b = end($bundleMap);
 
                 if (!file_exists($b->getPath().'/Controller/'.$controller.'Controller.php')) {
                     break;
