@@ -10,7 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 {% endblock use_statements %}
 
 {% block class_definition %}
-class {{ controller }}Controller extends Controller
+final class {{ controller }}Controller extends Controller
 {% endblock class_definition %}
 {
 {% block class_body %}

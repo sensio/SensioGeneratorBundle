@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 {% endblock use_statements %}
 
 {% block class_definition %}
-class {{ entity_class }}ControllerTest extends WebTestCase
+final class {{ entity_class }}ControllerTest extends WebTestCase
 {% endblock class_definition %}
 {
 {% block class_body %}

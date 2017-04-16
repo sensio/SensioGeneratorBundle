@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\Loader;
  * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
 {% block class_definition %}
-class {{ bundle_basename }}Extension extends Extension
+final class {{ bundle_basename }}Extension extends Extension
 {% endblock class_definition %}
 {
 {% block class_body %}
