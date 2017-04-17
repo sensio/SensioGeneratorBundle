@@ -100,9 +100,8 @@ extend it and only override the relevant parts:
 
   {% block phpdoc_header %}
        {{ parent() }}
-       *
-       * This is going to be inserted after the phpdoc title
-       * but before the annotations.
+
+       {# This is going to be inserted after the phpdoc title but before the annotations. #}
   {% endblock phpdoc_header %}
 
 Complex templates in the default skeleton are split into Twig blocks to allow
