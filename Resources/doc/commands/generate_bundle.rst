@@ -19,14 +19,14 @@ structure:
 
 .. code-block:: bash
 
-    $ php app/console generate:bundle
+    $ php bin/console generate:bundle
 
 To deactivate the interactive mode, use the `--no-interaction` option but don't
 forget to pass all needed options:
 
 .. code-block:: bash
 
-    $ php app/console generate:bundle --namespace=Acme/Bundle/BlogBundle --no-interaction
+    $ php bin/console generate:bundle --namespace=Acme/Bundle/BlogBundle --no-interaction
 
 Available Options
 -----------------
