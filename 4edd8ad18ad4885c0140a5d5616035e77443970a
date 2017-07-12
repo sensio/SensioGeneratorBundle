@@ -1,0 +1,15 @@
+---------------------------------------------------------------------------
+
+by guilliamxavier at 2017-07-12T13:57:38Z
+
+New output:
+
+![397-c](https://user-images.githubusercontent.com/7404452/28120238-b86803b0-6717-11e7-9257-d815aaaa59d0.png)
+
+---
+
+Please note that I did not introduce any other change, so, in particular:
+
+- the `OK`/`FAILED` lines are not indented
+- there is no `OK` line after the "`Generating a sample bundle skeleton into` ..." section (see https://github.com/sensiolabs/SensioGeneratorBundle/commit/ad28da85e9195ba73e5dd4811bc7f439b89da6ee#diff-fc3746671a611dd19b80d15471463f48L115, and `BundleGenerator::generateBundle()` doesn't return errors but throws exceptions)
+- there is a trailing colon at the end of the message (see commit 3d16db1631a3648d1b6662efe6de32735118b1da)
