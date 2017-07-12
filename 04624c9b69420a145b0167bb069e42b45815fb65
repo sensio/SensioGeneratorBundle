@@ -1,0 +1,23 @@
+---------------------------------------------------------------------------
+
+by jezemery at 2017-07-10T18:19:03Z
+
+This needs to be updated for the following versions
+```v3.3.4 v3.3.3 v3.2.11 v3.2.10 v2.8.24 v2.8.23 v2.7.31 v2.7.30 ```
+
+---------------------------------------------------------------------------
+
+by OskarStark at 2017-07-11T05:30:08Z
+
+Travis is failing due to a deprecation warning:
+
+```
+The Symfony\Component\Process\ProcessBuilder class is deprecated since version 3.4 and will be removed in 4.0. Use the Process class instead: 1x
+    1x in KernelManipulatorTest::testAddToArray from Sensio\Bundle\GeneratorBundle\Tests\Manipulator
+```
+
+---------------------------------------------------------------------------
+
+by Pierstoval at 2017-07-11T13:31:18Z
+
+I think this warning should also be present if any generated class is not autoloadable after generation
