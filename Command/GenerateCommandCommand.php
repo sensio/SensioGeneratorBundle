@@ -116,7 +116,7 @@ EOT
             $question = new Question($questionHelper->getQuestion('Command name', $name), $name);
             $question->setValidator(function ($answer) {
                 if (empty($answer)) {
-                   throw new \RuntimeException('The command name cannot be empty.');
+                    throw new \RuntimeException('The command name cannot be empty.');
                 }
 
                 return $answer;
