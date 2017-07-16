@@ -46,7 +46,7 @@ class KernelManipulatorTest extends GeneratorTest
         $phpFinder = new PhpExecutableFinder();
         $phpExecutable = $phpFinder->find();
 
-        $this->assertNotSame(false, $phpExecutable, 'Php executable binary found');
+        $this->assertNotFalse($phpExecutable, 'Php executable binary found');
 
         // ProcessBuilder is deprecated in symfony/process version 3.4,
         // but Process doesn't accept an array of arguments in versions <3.3,
@@ -71,7 +71,7 @@ class KernelManipulatorTest extends GeneratorTest
         $process->run();
 
         $result = strpos($process->getOutput(), 'No syntax errors detected');
-        $this->assertNotSame(false, $result, 'Manipulator should not provoke syntax errors');
+        $this->assertNotFalse($result, 'Manipulator should not provoke syntax errors');
     }
 
     /**
@@ -85,10 +85,9 @@ class KernelManipulatorTest extends GeneratorTest
             'With bundles array contains comma' => array(__DIR__.'/Stubs/ContainsCommaKernelStub.php'),
             'With bundles added w/o trailing comma' => array(__DIR__.'/Stubs/ContainsBundlesKernelStub.php'),
             'With some extra code and bad formatted' => array(__DIR__.'/Stubs/ContainsExtraCodeKernelStub.php'),
-
         );
 
-        if(PHP_VERSION_ID >= 50400){
+        if (PHP_VERSION_ID >= 50400) {
             $stubs = array_merge($stubs, array(
                 'With empty bundles array, short array syntax' => array(__DIR__.'/Stubs/EmptyBundlesShortArraySyntaxKernelStub.php'),
                 'With empty multiline bundles array, short array syntax' => array(__DIR__.'/Stubs/EmptyBundlesMultilineShortArraySyntaxKernelStub.php'),
