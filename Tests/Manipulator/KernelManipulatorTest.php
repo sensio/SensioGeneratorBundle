@@ -48,6 +48,8 @@ class KernelManipulatorTest extends GeneratorTest
 
         $this->assertNotFalse($phpExecutable, 'Php executable binary found');
 
+        $arguments = array($phpExecutable, '-l', $fullpath);
+
         // ProcessBuilder is deprecated in symfony/process version 3.4,
         // but Process doesn't accept an array of arguments in versions <3.3,
         // in which ProcessUtils::escapeArgument() is not marked as deprecated
@@ -58,7 +60,6 @@ class KernelManipulatorTest extends GeneratorTest
                 $useProcess = false;
             }
         }
-        $arguments = array($phpExecutable, '-l', $fullpath);
         if ($useProcess) {
             $process = new Process($arguments);
             // preserve the BC with symfony <3.3
