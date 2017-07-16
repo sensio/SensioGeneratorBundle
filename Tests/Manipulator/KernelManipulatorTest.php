@@ -11,6 +11,7 @@
 
 namespace Sensio\Bundle\GeneratorBundle\Tests\Manipulator;
 
+use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Sensio\Bundle\GeneratorBundle\Tests\Generator\GeneratorTest;
@@ -47,8 +48,26 @@ class KernelManipulatorTest extends GeneratorTest
 
         $this->assertNotSame(false, $phpExecutable, 'Php executable binary found');
 
-        $pb = new ProcessBuilder();
-        $process = $pb->add($phpExecutable)->add('-l')->add($fullpath)->getProcess();
+        // ProcessBuilder is deprecated in symfony/process version 3.4,
+        // but Process doesn't accept an array of arguments in versions <3.3,
+        // in which ProcessUtils::escapeArgument() is not marked as deprecated
+        $useProcess = true;
+        if (method_exists('Symfony\Component\Process\ProcessUtils', 'escapeArgument')) {
+            $r = new \ReflectionMethod('Symfony\Component\Process\ProcessUtils', 'escapeArgument');
+            if ($r->isPublic() && false === strpos($r->getDocComment(), '@deprecated')) {
+                $useProcess = false;
+            }
+        }
+        $arguments = array($phpExecutable, '-l', $fullpath);
+        if ($useProcess) {
+            $process = new Process($arguments);
+            // preserve the BC with symfony <3.3
+            $process->setCommandLine($process->getCommandLine());
+        } else {
+            $pb = new ProcessBuilder($arguments);
+            $process = $pb->getProcess();
+        }
+
         $process->run();
 
         $result = strpos($process->getOutput(), 'No syntax errors detected');
