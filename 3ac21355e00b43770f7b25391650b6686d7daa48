@@ -1,0 +1,10 @@
+---------------------------------------------------------------------------
+
+by guilliamxavier at 2017-07-16T12:39:14Z
+
+The Travis `hhvm` build is failing because of an unrelated reason:
+```HHVM is no longer supported on Ubuntu Precise. Please consider using Trusty with `dist: trusty`.```
+
+I guess this could be fixed by adding a
+```dist: trusty```
+line at the top of the `.travis.yml` file (or dropping HHVM support).
