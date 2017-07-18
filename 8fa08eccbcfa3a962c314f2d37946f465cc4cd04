@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+
+by fabpot at 2016-10-10T14:16:55Z
+
+I'm not comfortable with this one. I'm pretty sure that there was a reason for having everything as an option (I unfortunately don't remember the exact one).
+
+---------------------------------------------------------------------------
+
+by HeahDude at 2016-10-10T19:26:55Z
+
+@fabpot is this the fact that an argument cannot be required and resolved while interacting as options do?
+
+---------------------------------------------------------------------------
+
+by fabpot at 2016-10-10T21:00:25Z
+
+Should be that indeed.
