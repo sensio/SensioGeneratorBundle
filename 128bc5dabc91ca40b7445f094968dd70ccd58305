@@ -1,0 +1,19 @@
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-07-18T07:21:28Z
+
+Hm, looks like we now cannot test PHP 5.3 anymore.
+
+---------------------------------------------------------------------------
+
+by guilliamxavier at 2017-07-18T07:24:55Z
+
+@xabbuh Cause: https://github.com/travis-ci/travis-ci/issues/7693
+Possible solution: https://github.com/travis-ci/travis-ci/issues/7693#issuecomment-305251970 -> https://github.com/travis-ci/travis-ci/issues/7712#issuecomment-300553336
+i.e. override `dist: trusty` to `dist: precise` only for `- php: 5.3`
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-07-18T07:56:33Z
+
+@guilliamxavier Indeed, this helped a lot. Thank you very much! Tests are green again.
