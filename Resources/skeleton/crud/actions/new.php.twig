@@ -16,7 +16,7 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        ${{ entity_singularized }} = new {{ entity_singularized|capitalize }}();
+        ${{ entity_singularized }} = new {{ entity }}();
         {% if use_form_type_instance -%}
             $form = $this->createForm(new {{ entity_singularized|capitalize }}Type(), ${{ entity_singularized }});
         {% else -%}
