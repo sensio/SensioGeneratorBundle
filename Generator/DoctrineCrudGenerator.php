@@ -1,29 +1,22 @@
 <?php
+declare(strict_types=1);
 
 /*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * This file is a modified copy of the DoctrineCrudGenerator that is part of the Symfony package.
  */
 
-namespace Sensio\Bundle\GeneratorBundle\Generator;
+namespace Wame\SensioGeneratorBundle\Generator;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\Common\Inflector\Inflector;
 
 /**
- * Generates a CRUD controller.
- *
  * @author Fabien Potencier <fabien@symfony.com>
+ * @author Kevin Driessen <kevin@wame.nl>
  */
 class DoctrineCrudGenerator extends Generator
 {
-    protected $filesystem;
     protected $rootDir;
     protected $routePrefix;
     protected $routeNamePrefix;
@@ -32,18 +25,9 @@ class DoctrineCrudGenerator extends Generator
     protected $entitySingularized;
     protected $entityPluralized;
     protected $metadata;
-    protected $format;
     protected $actions;
-
-    /**
-     * @param Filesystem $filesystem
-     * @param string     $rootDir
-     */
-    public function __construct(Filesystem $filesystem, $rootDir)
-    {
-        $this->filesystem = $filesystem;
-        $this->rootDir = $rootDir;
-    }
+    protected $useDatatable;
+    protected $useVoter;
 
     /**
      * Generate the CRUD controller.
@@ -51,20 +35,21 @@ class DoctrineCrudGenerator extends Generator
      * @param BundleInterface   $bundle           A bundle object
      * @param string            $entity           The entity relative class name
      * @param ClassMetadataInfo $metadata         The entity class metadata
-     * @param string            $format           The configuration format (xml, yaml, annotation)
      * @param string            $routePrefix      The route name prefix
      * @param bool              $needWriteActions Whether or not to generate write actions
      * @param bool              $forceOverwrite   Whether or not to overwrite the controller
      *
      * @throws \RuntimeException
      */
-    public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata, $format, $routePrefix, $needWriteActions, $forceOverwrite)
+    public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata, $routePrefix, $needWriteActions, $forceOverwrite, $useDatatable, $useVoter)
     {
+        $this->useDatatable = $useDatatable;
+        $this->useVoter = $useVoter;
         $this->routePrefix = $routePrefix;
         $this->routeNamePrefix = self::getRouteNamePrefix($routePrefix);
         $this->actions = $needWriteActions ? array('index', 'show', 'new', 'edit', 'delete') : array('index', 'show');
 
-        if (count($metadata->identifier) != 1) {
+        if (count($metadata->identifier) !== 1) {
             throw new \RuntimeException('The CRUD generator does not support entity classes with multiple or no primary keys.');
         }
 
@@ -76,11 +61,10 @@ class DoctrineCrudGenerator extends Generator
         $this->entityPluralized = lcfirst(Inflector::pluralize($entityName));
         $this->bundle = $bundle;
         $this->metadata = $metadata;
-        $this->setFormat($format);
 
         $this->generateControllerClass($forceOverwrite);
 
-        $dir = sprintf('%s/Resources/views/%s', $this->rootDir, strtolower($entity));
+        $dir = sprintf('%s/Resources/views/%s', $this->rootDir, Inflector::tableize($entity));
 
         if (!file_exists($dir)) {
             self::mkdir($dir);
@@ -88,72 +72,20 @@ class DoctrineCrudGenerator extends Generator
 
         $this->generateIndexView($dir);
 
-        if (in_array('show', $this->actions)) {
+        if (in_array('show', $this->actions, true)) {
             $this->generateShowView($dir);
         }
 
-        if (in_array('new', $this->actions)) {
+        if (in_array('new', $this->actions, true)) {
             $this->generateNewView($dir);
         }
 
-        if (in_array('edit', $this->actions)) {
+        if (in_array('edit', $this->actions, true)) {
             $this->generateEditView($dir);
         }
-
-        $this->generateTestClass();
-        $this->generateConfiguration();
     }
 
-    /**
-     * Sets the configuration format.
-     *
-     * @param string $format The configuration format
-     */
-    protected function setFormat($format)
-    {
-        switch ($format) {
-            case 'yml':
-            case 'xml':
-            case 'php':
-            case 'annotation':
-                $this->format = $format;
-                break;
-            default:
-                $this->format = 'yml';
-                break;
-        }
-    }
-
-    /**
-     * Generates the routing configuration.
-     */
-    protected function generateConfiguration()
-    {
-        if (!in_array($this->format, array('yml', 'xml', 'php'))) {
-            return;
-        }
-
-        $target = sprintf(
-            '%s/Resources/config/routing/%s.%s',
-            $this->bundle->getPath(),
-            strtolower(str_replace('\\', '_', $this->entity)),
-            $this->format
-        );
-
-        $this->renderFile('crud/config/routing.'.$this->format.'.twig', $target, array(
-            'actions' => $this->actions,
-            'route_prefix' => $this->routePrefix,
-            'route_name_prefix' => $this->routeNamePrefix,
-            'bundle' => $this->bundle->getName(),
-            'entity' => $this->entity,
-            'identifier' => $this->metadata->identifier[0],
-        ));
-    }
-
-    /**
-     * Generates the controller class only.
-     */
-    protected function generateControllerClass($forceOverwrite)
+    protected function generateControllerClass(bool $forceOverwrite): void
     {
         $dir = $this->bundle->getPath();
 
@@ -172,7 +104,7 @@ class DoctrineCrudGenerator extends Generator
             throw new \RuntimeException('Unable to generate the controller as it already exists.');
         }
 
-        $this->renderFile('crud/controller.php.twig', $target, array(
+        $this->renderFile('crud/controller.php.twig', $target, [
             'actions' => $this->actions,
             'route_prefix' => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
@@ -184,45 +116,18 @@ class DoctrineCrudGenerator extends Generator
             'entity_class' => $entityClass,
             'namespace' => $this->bundle->getNamespace(),
             'entity_namespace' => $entityNamespace,
-            'format' => $this->format,
+            'format' => 'annotation',
             // BC with Symfony 2.7
             'use_form_type_instance' => !method_exists('Symfony\Component\Form\AbstractType', 'getBlockPrefix'),
-        ));
+            'use_datatable' => $this->useDatatable,
+            'use_voter' => $this->useVoter,
+        ]);
     }
 
-    /**
-     * Generates the functional test class only.
-     */
-    protected function generateTestClass()
+    protected function generateIndexView(string $dir): void
     {
-        $parts = explode('\\', $this->entity);
-        $entityClass = array_pop($parts);
-        $entityNamespace = implode('\\', $parts);
-
-        $dir = $this->bundle->getPath().'/Tests/Controller';
-        $target = $dir.'/'.str_replace('\\', '/', $entityNamespace).'/'.$entityClass.'ControllerTest.php';
-
-        $this->renderFile('crud/tests/test.php.twig', $target, array(
-            'route_prefix' => $this->routePrefix,
-            'route_name_prefix' => $this->routeNamePrefix,
-            'entity' => $this->entity,
-            'bundle' => $this->bundle->getName(),
-            'entity_class' => $entityClass,
-            'namespace' => $this->bundle->getNamespace(),
-            'entity_namespace' => $entityNamespace,
-            'actions' => $this->actions,
-            'form_type_name' => strtolower(str_replace('\\', '_', $this->bundle->getNamespace()).($parts ? '_' : '').implode('_', $parts).'_'.$entityClass),
-        ));
-    }
-
-    /**
-     * Generates the index.html.twig template in the final bundle.
-     *
-     * @param string $dir The path to the folder that hosts templates in the bundle
-     */
-    protected function generateIndexView($dir)
-    {
-        $this->renderFile('crud/views/index.html.twig.twig', $dir.'/index.html.twig', array(
+        $templateFile = $this->useDatatable ? 'crud/views/index-with-datatable.html.twig.twig' : 'crud/views/index.html.twig.twig';
+        $this->renderFile($templateFile, $dir.'/index.html.twig', [
             'bundle' => $this->bundle->getName(),
             'entity' => $this->entity,
             'entity_pluralized' => $this->entityPluralized,
@@ -233,17 +138,12 @@ class DoctrineCrudGenerator extends Generator
             'record_actions' => $this->getRecordActions(),
             'route_prefix' => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
-        ));
+        ]);
     }
 
-    /**
-     * Generates the show.html.twig template in the final bundle.
-     *
-     * @param string $dir The path to the folder that hosts templates in the bundle
-     */
-    protected function generateShowView($dir)
+    protected function generateShowView(string $dir): void
     {
-        $this->renderFile('crud/views/show.html.twig.twig', $dir.'/show.html.twig', array(
+        $this->renderFile('crud/views/show.html.twig.twig', $dir.'/show.html.twig', [
             'bundle' => $this->bundle->getName(),
             'entity' => $this->entity,
             'entity_singularized' => $this->entitySingularized,
@@ -252,17 +152,13 @@ class DoctrineCrudGenerator extends Generator
             'actions' => $this->actions,
             'route_prefix' => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
-        ));
+            'use_voter' => $this->useVoter,
+        ]);
     }
 
-    /**
-     * Generates the new.html.twig template in the final bundle.
-     *
-     * @param string $dir The path to the folder that hosts templates in the bundle
-     */
-    protected function generateNewView($dir)
+    protected function generateNewView(string $dir): void
     {
-        $this->renderFile('crud/views/new.html.twig.twig', $dir.'/new.html.twig', array(
+        $this->renderFile('crud/views/new.html.twig.twig', $dir.'/new.html.twig', [
             'bundle' => $this->bundle->getName(),
             'entity' => $this->entity,
             'entity_singularized' => $this->entitySingularized,
@@ -270,17 +166,13 @@ class DoctrineCrudGenerator extends Generator
             'route_name_prefix' => $this->routeNamePrefix,
             'actions' => $this->actions,
             'fields' => $this->metadata->fieldMappings,
-        ));
+            'use_voter' => $this->useVoter,
+        ]);
     }
 
-    /**
-     * Generates the edit.html.twig template in the final bundle.
-     *
-     * @param string $dir The path to the folder that hosts templates in the bundle
-     */
-    protected function generateEditView($dir)
+    protected function generateEditView(string $dir): void
     {
-        $this->renderFile('crud/views/edit.html.twig.twig', $dir.'/edit.html.twig', array(
+        $this->renderFile('crud/views/edit.html.twig.twig', $dir.'/edit.html.twig', [
             'route_prefix' => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
             'identifier' => $this->metadata->identifier[0],
@@ -289,22 +181,18 @@ class DoctrineCrudGenerator extends Generator
             'fields' => $this->metadata->fieldMappings,
             'bundle' => $this->bundle->getName(),
             'actions' => $this->actions,
-        ));
+            'use_voter' => $this->useVoter,
+        ]);
     }
 
-    /**
-     * Returns an array of record actions to generate (edit, show).
-     *
-     * @return array
-     */
-    protected function getRecordActions()
+    protected function getRecordActions(): array
     {
         return array_filter($this->actions, function ($item) {
-            return in_array($item, array('show', 'edit'));
+            return in_array($item, ['show', 'edit']);
         });
     }
 
-    public static function getRouteNamePrefix($prefix)
+    public static function getRouteNamePrefix(string $prefix): string
     {
         $prefix = preg_replace('/{(.*?)}/', '', $prefix); // {foo}_bar -> _bar
         $prefix = str_replace('/', '_', $prefix);

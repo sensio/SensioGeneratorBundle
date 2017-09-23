@@ -1,27 +1,21 @@
 <?php
+declare(strict_types=1);
 
-/*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
-namespace Sensio\Bundle\GeneratorBundle\Generator;
+namespace Wame\SensioGeneratorBundle\Generator;
 
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Wame\SensioGeneratorBundle\Twig\InflectorExtension;
 
-/**
- * Generator is the base class for all generators.
- *
- * @author Fabien Potencier <fabien@symfony.com>
- */
 class Generator
 {
-    private $skeletonDirs;
-    private static $output;
+    protected $skeletonDirs;
+    protected static $output;
+    protected $rootDir;
+
+    public function __construct(string $rootDir)
+    {
+        $this->rootDir = $rootDir;
+    }
 
     /**
      * Sets an array of directories to look for templates.
@@ -50,12 +44,22 @@ class Generator
      */
     protected function getTwigEnvironment()
     {
-        return new \Twig_Environment(new \Twig_Loader_Filesystem($this->skeletonDirs), array(
+        if (is_dir($dir = $this->rootDir.'/Resources/WameSensioGeneratorBundle/skeleton')) {
+            $skeletonDirs[] = $dir;
+        }
+        $skeletonDirs[] = __DIR__.'/../Resources/skeleton';
+
+        $this->setSkeletonDirs($skeletonDirs);
+
+        $twigEnvironment = new \Twig_Environment(new \Twig_Loader_Filesystem($this->skeletonDirs), array(
             'debug' => true,
             'cache' => false,
             'strict_variables' => true,
             'autoescape' => false,
         ));
+        $twigEnvironment->addExtension(new InflectorExtension());
+
+        return $twigEnvironment;
     }
 
     protected function renderFile($template, $target, $parameters)
@@ -65,9 +69,6 @@ class Generator
         return self::dump($target, $this->render($template, $parameters));
     }
 
-    /**
-     * @internal
-     */
     public static function mkdir($dir, $mode = 0777, $recursive = true)
     {
         if (!is_dir($dir)) {
@@ -76,12 +77,16 @@ class Generator
         }
     }
 
-    /**
-     * @internal
-     */
-    public static function dump($filename, $content)
+    public static function dump($filename, $content, $allowOverwrite = true)
     {
+        //TODO: set other permissions?
+        $dir = dirname($filename);
+        self::mkdir($dir);
         if (file_exists($filename)) {
+            if ($allowOverwrite === false) {
+                self::writeln(sprintf('  <fg=yellow>already exists</> %s', self::relativizePath($filename)));
+                return false;
+            }
             self::writeln(sprintf('  <fg=yellow>updated</> %s', self::relativizePath($filename)));
         } else {
             self::writeln(sprintf('  <fg=green>created</> %s', self::relativizePath($filename)));
@@ -90,7 +95,12 @@ class Generator
         return file_put_contents($filename, $content);
     }
 
-    private static function writeln($message)
+    public static function append($filename, $content)
+    {
+        return file_put_contents($filename, $content, FILE_APPEND);
+    }
+
+    protected static function writeln($message)
     {
         if (null === self::$output) {
             self::$output = new ConsoleOutput();
@@ -99,7 +109,7 @@ class Generator
         self::$output->writeln($message);
     }
 
-    private static function relativizePath($absolutePath)
+    protected static function relativizePath($absolutePath)
     {
         $relativePath = str_replace(getcwd(), '.', $absolutePath);
 
