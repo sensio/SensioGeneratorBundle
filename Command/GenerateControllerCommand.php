@@ -254,6 +254,7 @@ EOT
 
             // route
             $question = new Question($questionHelper->getQuestion('Action route', '/'.substr($actionName, 0, -6)), '/'.substr($actionName, 0, -6));
+            $question->setAutocompleterValues(array_column($actions, 'route'));
             $route = $questionHelper->ask($input, $output, $question);
             $placeholders = $this->getPlaceholdersFromRoute($route);
 
