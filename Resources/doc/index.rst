@@ -125,4 +125,4 @@ skeleton template by prefixing its path with ``skeleton/`` like we did above:
 
 You can learn more about this neat "trick" in the official `Twig documentation`_.
 
-.. _`Twig documentation`: http://twig.sensiolabs.org/doc/recipes.html#overriding-a-template-that-also-extends-itself
+.. _`Twig documentation`: https://twig.sensiolabs.org/doc/recipes.html#overriding-a-template-that-also-extends-itself
