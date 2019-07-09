@@ -9,4 +9,4 @@ code skeletons like bundles, form classes, or CRUD controllers based on a
 Doctrine 2 schema.
 
 More information in the official
-[documentation](http://symfony.com/doc/current/bundles/SensioGeneratorBundle/index.html).
+[documentation](https://symfony.com/doc/current/bundles/SensioGeneratorBundle/index.html).
